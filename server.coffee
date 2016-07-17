@@ -38,7 +38,8 @@ proxy.onRequest (ctx, callback) ->
     callback null, chunk
 
   ctx.onRequestEnd (ctx, callback) ->
-    data = decodeData RequestEnvelop, Buffer.concat requestChunks
+    buffer = Buffer.concat requestChunks
+    data = decodeData RequestEnvelop, buffer
     console.log "request", data
 
     # TODO: inject changes before forwarding request
@@ -51,11 +52,13 @@ proxy.onRequest (ctx, callback) ->
     callback null, chunk
 
   ctx.onResponseEnd (ctx, callback) ->
-    data = decodeData ResponseEnvelop, Buffer.concat responseChunks
+    buffer = Buffer.concat responseChunks
+
+    decodeData ResponseEnvelop, buffer
     console.log "response", data
 
     # TODO: inject changes before forwarding response
-    ctx.proxyToClientResponse.write request
+    ctx.proxyToClientResponse.write buffer
     callback()
 
   callback()
