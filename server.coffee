@@ -51,7 +51,7 @@ proxy.onRequest (ctx, callback) ->
     callback()
 
   ctx.onResponseEnd (ctx, callback) ->
-    data = decodeData scheme, Buffer.concat responseChunks
+    data = decodeData ResponseEnvelop, Buffer.concat responseChunks
     console.log "response", data
 
     # TODO: inject changes before forwarding response
