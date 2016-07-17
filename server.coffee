@@ -35,7 +35,7 @@ proxy.onRequest (ctx, callback) ->
   requestChunks = []
   ctx.onRequestData (ctx, chunk, callback) ->
     requestChunks.push chunk
-    callback()
+    callback null, chunk
 
   ctx.onRequestEnd (ctx, callback) ->
     data = decodeData RequestEnvelop, Buffer.concat requestChunks
@@ -48,7 +48,7 @@ proxy.onRequest (ctx, callback) ->
   responseChunks = []
   ctx.onResponseData (ctx, chunk, callback) ->
     responseChunks.push chunk
-    callback()
+    callback null, chunk
 
   ctx.onResponseEnd (ctx, callback) ->
     data = decodeData ResponseEnvelop, Buffer.concat responseChunks
@@ -67,7 +67,7 @@ proxy.onError (ctx, err, errorKind) ->
 
 decodeData = (scheme, data) ->
   try
-    decoded = RequestEnvelop.decode data
+    decoded = scheme.decode data
   catch e
     console.warn "[-] parsing protbuf buffer failed: #{e}"
     if e.decoded
