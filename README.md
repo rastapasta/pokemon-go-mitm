@@ -18,7 +18,7 @@ Take a look at the **examples** to get started and feel happily invited to submi
 ## How to code it?
 
 ```coffeescript
-PokemonGoMITM = require '../pokemon-go-mitm'
+PokemonGoMITM = require './lib/pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
 	.setResponseHandler "FortDetails", (data) ->
 		data.name = "Pokemon GO MitM PoC"
