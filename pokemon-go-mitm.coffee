@@ -50,10 +50,15 @@ class PokemonGoMITM
         # Queue the ProtoId for the response handling
         requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
         
+        proto = "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
+        unless proto in @POGOProtos.info()
+          console.log "[-] Request handler for #{protoId} isn't implemented yet.."
+          continue
+
         decoded = if request.request_message
-          @POGOProtos.parse request.request_message, "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
+          @POGOProtos.parse request.request_message, proto
         else {}
-        
+  
         console.log "[+] Request for #{protoId}", decoded
 
       console.log "[+] Waiting for response..."
@@ -76,7 +81,7 @@ class PokemonGoMITM
           decoded = @POGOProtos.parse response, proto
           console.log "[+] Response for #{proto}: ", decoded
         else
-          console.log "[-] Response handler for #{requested[id]} not implemented yet.."
+          console.log "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
       # TODO: inject changes before forwarding response
       ctx.proxyToClientResponse.write buffer
