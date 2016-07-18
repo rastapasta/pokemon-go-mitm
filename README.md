@@ -39,9 +39,9 @@ Currently, following actions can be intercepted and altered on the fly:
 * FortDetails
 * FortSearch
 * GetHatchedEggs
-* GetInventoryResponse
-* GetMapObjectsResponse
-* GetPlayerResponse
+* GetInventory
+* GetMapObjects
+* GetPlayer
 
 ### Requests (going from the app to the server)
 
