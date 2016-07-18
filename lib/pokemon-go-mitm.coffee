@@ -12,13 +12,13 @@ class PokemonGoMITM
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
+  debug: true
+
+  requestHandlers: {}
+  responseHandlers: {}
+
   constructor: (@port) ->
     throw "[-] No port given" unless @port
-
-    # Init the Protobuf engine with the beautiful
-    # Protos from https://github.com/AeonLucid/POGOProtos
-    @POGOProtos = POGOProtos
-
     @setupProxy()
 
   setupProxy: ->
@@ -34,7 +34,7 @@ class PokemonGoMITM
     # don't interfer with anything not going to the Pokemon API
     return callback() unless ctx.clientToProxyRequest.headers.host is "pgorelease.nianticlabs.com"
 
-    console.log "[+++] Request to #{ctx.clientToProxyRequest.url}"
+    @debug "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
     requestChunks = []
@@ -45,7 +45,7 @@ class PokemonGoMITM
     requested = []
     ctx.onRequestEnd (ctx, callback) =>
       buffer = Buffer.concat requestChunks
-      data = @POGOProtos.parse buffer, @requestEnvelope
+      data = POGOProtos.parse buffer, @requestEnvelope
       recode = false
 
       for id,request of data.requests
@@ -55,23 +55,23 @@ class PokemonGoMITM
         requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
         
         proto = "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
-        unless proto in @POGOProtos.info()
-          console.log "[-] Request handler for #{protoId} isn't implemented yet.."
+        unless proto in POGOProtos.info()
+          @debug "[-] Request handler for #{protoId} isn't implemented yet.."
           continue
 
         decoded = if request.request_message
-          @POGOProtos.parse request.request_message, proto
+          POGOProtos.parse request.request_message, proto
         else {}
         
-        if overwrite = @handleMessage protoId, decoded
-          console.log "[!] Overwriting "+proto+" with ", decoded
-          data[id] = @POGOProtos.serialize overwrite, proto
+        if overwrite = @handleRequest protoId, decoded
+          @debug "[!] Overwriting "+proto
+          data[id] = POGOProtos.serialize overwrite, proto
           recode = true
   
       console.log "[+] Waiting for response..."
       
       if recode
-        buffer = @POGOProtos.serialize data, @requestEnvelope
+        buffer = POGOProtos.serialize data, @requestEnvelope
 
       # TODO: inject changes back into the POST body
       callback()
@@ -80,34 +80,35 @@ class PokemonGoMITM
     responseChunks = []
     ctx.onResponseData (ctx, chunk, callback) =>
       responseChunks.push chunk
-      callback null, chunk
+      callback()
 
     ctx.onResponseEnd (ctx, callback) =>
       buffer = Buffer.concat responseChunks
-      data = @POGOProtos.parse buffer, @responseEnvelope
+      data = POGOProtos.parse buffer, @responseEnvelope
       recode = false
 
       for id,response of data.returns
         proto = requested[id]
-        if proto in @POGOProtos.info()
-          decoded = @POGOProtos.parse response, proto
+        if proto in POGOProtos.info()
+          decoded = POGOProtos.parse response, proto
           
-          protoId = proto.split(/\./).pop()
+          protoId = proto.split(/\./).pop().split(/Response/)[0]
 
           if overwrite = @handleResponse protoId, decoded
-            console.log "[!] Overwriting "+protoId+" with ", overwrite
-            data.returns[id] = @POGOProtos.serialize overwrite, proto
+            @debug "[!] Overwriting "+protoId
+            data.returns[id] = POGOProtos.serialize overwrite, proto
             recode = true
 
         else
-          console.log "[-] Response handler for #{requested[id]} isn't implemented yet.."
+          @debug "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
       # Overwrite the response in case a hook hit the fan
       if recode
-        buffer = @POGOProtos.serialize data, @responseEnvelope
+        buffer = POGOProtos.serialize data, @responseEnvelope
 
       ctx.proxyToClientResponse.end buffer
-      callback()
+
+      callback false
 
     callback()
 
@@ -115,12 +116,33 @@ class PokemonGoMITM
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
     console.error errorKind + ' on ' + url + ':', err
 
-  handleMessage: (proto, data) ->
-    console.log "[+] Request for action #{proto}: ", data
-    return false
+  handleRequest: (action, data) ->
+    @debug "[+] Request for action #{action}: "
+    @debug data
 
-  handleResponse: (proto, data) ->
-    console.log "[+] Response for action #{proto}: ", data
-    return false
+    if @requestHandlers[action]
+      return @requestHandlers[action] data
+
+    false
+
+  handleResponse: (action, data) ->
+    @debug "[+] Response for action #{action}"
+    @debug data
+
+    if @responseHandlers[action]
+      return @responseHandlers[action] data
+
+    false
+
+  setResponseHandler: (action, cb) ->
+    @responseHandlers[action] = cb
+    this
+
+  setRequestHandler: (action, cb) ->
+    @requestHandlers[action] = cb
+    this
+
+  debug: (text) ->
+    console.log text if @debug
 
 module.exports = PokemonGoMITM

@@ -1,2 +1,2 @@
 require('coffee-script/register');
-module.exports = require('./pokemon-go-mitm');
+module.exports = require('./lib/pokemon-go-mitm');
