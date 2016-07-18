@@ -7,7 +7,7 @@
 
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 
-server = new PokemonGoMITM(8081)
+server = new PokemonGoMITM port: 8081
 	.setResponseHandler "FortDetails", (data) ->
 		data.name = "Pokemon GO MitM PoC"
 		data.description = "meow!"

@@ -12,13 +12,12 @@ class PokemonGoMITM
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
-  debug: true
-
   requestHandlers: {}
   responseHandlers: {}
 
-  constructor: (@port) ->
-    throw "[-] No port given" unless @port
+  constructor: (options) ->
+    @port = options.port or 8081
+    @debug = options.debug or false
     @setupProxy()
 
   setupProxy: ->
@@ -34,7 +33,7 @@ class PokemonGoMITM
     # don't interfer with anything not going to the Pokemon API
     return callback() unless ctx.clientToProxyRequest.headers.host is "pgorelease.nianticlabs.com"
 
-    @debug "[+++] Request to #{ctx.clientToProxyRequest.url}"
+    @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
     requestChunks = []
@@ -56,7 +55,7 @@ class PokemonGoMITM
         
         proto = "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
         unless proto in POGOProtos.info()
-          @debug "[-] Request handler for #{protoId} isn't implemented yet.."
+          @log "[-] Request handler for #{protoId} isn't implemented yet.."
           continue
 
         decoded = if request.request_message
@@ -95,12 +94,12 @@ class PokemonGoMITM
           protoId = proto.split(/\./).pop().split(/Response/)[0]
 
           if overwrite = @handleResponse protoId, decoded
-            @debug "[!] Overwriting "+protoId
+            @log "[!] Overwriting "+protoId
             data.returns[id] = POGOProtos.serialize overwrite, proto
             recode = true
 
         else
-          @debug "[-] Response handler for #{requested[id]} isn't implemented yet.."
+          @log "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
       # Overwrite the response in case a hook hit the fan
       if recode
@@ -117,8 +116,8 @@ class PokemonGoMITM
     console.error errorKind + ' on ' + url + ':', err
 
   handleRequest: (action, data) ->
-    @debug "[+] Request for action #{action}: "
-    @debug data
+    @log "[+] Request for action #{action}: "
+    @log data if data
 
     if @requestHandlers[action]
       return @requestHandlers[action] data
@@ -126,8 +125,8 @@ class PokemonGoMITM
     false
 
   handleResponse: (action, data) ->
-    @debug "[+] Response for action #{action}"
-    @debug data
+    @log "[+] Response for action #{action}"
+    @log data if data
 
     if @responseHandlers[action]
       return @responseHandlers[action] data
@@ -142,7 +141,7 @@ class PokemonGoMITM
     @requestHandlers[action] = cb
     this
 
-  debug: (text) ->
+  log: (text) ->
     console.log text if @debug
 
 module.exports = PokemonGoMITM
