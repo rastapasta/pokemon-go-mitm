@@ -62,8 +62,8 @@ message RpcResponseEnvelopeProto {
   uint64 response_id = 2;
 
   bytes footer = 6;
-  double lat = 7;
-  double long = 8;
+  fixed64 lat = 7;
+  fixed64 long = 8;
   double altitude = 9;
 
   Thing thing = 11;

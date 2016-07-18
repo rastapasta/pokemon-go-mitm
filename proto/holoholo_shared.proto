@@ -1016,12 +1016,12 @@ message IapItemDisplayProto {
   HoloIapItemCategory Category = 2;
   int32 SortOrder = 3;
   repeated Rpc.Item Items = 4;
-  repeated int32 Counts = 5;
+  repeated int32 Counts = 5 [packed=true];
 }
 
 message IapSettingsProto {
   int32 DailyBonusCoins = 1;
-  repeated int32 DailyDefenderBonusPerPokemon = 2;
+  repeated int32 DailyDefenderBonusPerPokemon = 2 [packed=true];
   int32 DailyDefenderBonusMaxDefenders = 3;
   repeated string DailyDefenderBonusCurrency = 4;
   int64 MinTimeBetweenClaimsMs = 5;
@@ -1136,7 +1136,7 @@ message PlayerStatsProto {
   int32 PrestigeRaisedTotal = 19;
   int32 PrestigeDroppedTotal = 20;
   int32 NumPokemonDeployed = 21;
-  repeated int32 NumPokemonCaughtByType = 22;
+  repeated int32 NumPokemonCaughtByType = 22 [packed=true];
   int32 SmallRattataCaught = 23;
 }
 
@@ -1201,8 +1201,8 @@ enum GetMapObjectsOutProtoStatus {
 
 // The get map objects request object
 message GetMapObjectsProto {
-  repeated uint64 CellId = 1;
-  repeated int64 SinceTimeMs = 2;
+  repeated uint64 CellId = 1 [packed=true];
+  repeated int64 SinceTimeMs = 2 [packed=true];
   double PlayerLat = 3;
   double PlayerLng = 4;
 }

@@ -4,7 +4,7 @@ import public "holoholo_shared.proto";
 
 message StartGymBattleProto {
   string GymId = 1;
-  repeated uint64 AttackingPokemonId = 2;
+  repeated uint64 AttackingPokemonId = 2 [packed=true];
   uint64 DefendingPokemonId = 3;
   double PlayerLatDegrees = 4;
   double PlayerLngDegrees = 5;
@@ -64,7 +64,7 @@ message BattleLogProto {
 message BattleResultsProto {
   GymStateProto GymState = 1;
   repeated BattleParticipantProto Attackers = 2;
-  repeated int32 PlayerXpAwarded = 3;
+  repeated int32 PlayerXpAwarded = 3 [packed=true];
   int64 NextDefenderPokemonId = 4;
   int32 GymPointsDelta = 5;
 }

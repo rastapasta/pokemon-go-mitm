@@ -53,7 +53,7 @@ message CollectDailyDefenderBonusProto {
 message CollectDailyDefenderBonusOutProto {
   Rpc.Types.CollectDailyDefenderBonusOutProto.Result Result = 1;
   repeated string CurrencyType = 2;
-  repeated int32 CurrencyAwarded = 3;
+  repeated int32 CurrencyAwarded = 3 [packed=true];
   int32 NumDefenders = 4;
 }
 message EchoProto {
@@ -65,10 +65,10 @@ message GetHatchedEggsProto {
 }
 message GetHatchedEggsOutProto {
   bool Success = 1;
-  repeated uint64 PokemonId = 2;
-  repeated int32 ExpAwarded = 3;
-  repeated int32 CandyAwarded = 4;
-  repeated int32 StardustAwarded = 5;
+  repeated uint64 PokemonId = 2 [packed=true];
+  repeated int32 ExpAwarded = 3 [packed=true];
+  repeated int32 CandyAwarded = 4 [packed=true];
+  repeated int32 StardustAwarded = 5 [packed=true];
 }
 message EncounterProto {
   uint64 EncounterId = 1;
@@ -77,7 +77,7 @@ message EncounterProto {
   double PlayerLngDegrees = 4;
 }
 message EncounterOutProto {
-  WildPokemonProto Pokemon = 1;
+  int32 PokemonId = 1;
   Rpc.Types.EncounterOutProto.Background Background = 2;
   Rpc.Types.EncounterOutProto.Status Status = 3;
   CaptureProbabilityProto CaptureProbability = 4;
@@ -126,9 +126,9 @@ message CaptureProbabilityProto {
 }
 message CaptureScoreProto {
   repeated Rpc.HoloActivityType ActivityType = 1;
-  repeated int32 Exp = 2;
-  repeated int32 Candy = 3;
-  repeated int32 Stardust = 4;
+  repeated int32 Exp = 2 [packed=true];
+  repeated int32 Candy = 3 [packed=true];
+  repeated int32 Stardust = 4 [packed=true];
 }
 message UseIncenseActionProto {
   Rpc.Item IncenseType = 1;
@@ -352,7 +352,7 @@ message TypeEffectiveSettingsProto {
 message BadgeSettingsProto {
   Rpc.HoloBadgeType BadgeType = 1;
   int32 BadgeRanks = 2;
-  repeated int32 Targets = 3;
+  repeated int32 Targets = 3 [packed=true];
 }
 message CameraSettingsProto {
   string NextCamera = 1;
@@ -373,17 +373,17 @@ message CameraSettingsProto {
   repeated float VertCtrRatio = 16;
 }
 message PlayerLevelSettingsProto {
-  repeated int32 RankNum = 1;
-  repeated int32 RequiredExp = 2;
+  repeated int32 RankNum = 1 [packed=true];
+  repeated int32 RequiredExp = 2 [packed=true];
   repeated float CpMultiplier = 3;
   int32 MaxEggPlayerLevel = 4;
   int32 MaxEncounterPlayerLevel = 5;
 }
 message GymLevelSettingsProto {
-  repeated int32 RequiredExp = 1;
-  repeated int32 LeaderSlots = 2;
-  repeated int32 TrainerSlots = 3;
-  repeated int32 SearchRollBonus = 4;
+  repeated int32 RequiredExp = 1 [packed=true];
+  repeated int32 LeaderSlots = 2 [packed=true];
+  repeated int32 TrainerSlots = 3 [packed=true];
+  repeated int32 SearchRollBonus = 4 [packed=true];
 }
 message GymBattleSettingsProto {
   float EnergyPerSec = 1;
@@ -411,8 +411,8 @@ message EncounterSettingsProto {
 message PokemonUpgradeSettingsProto {
   int32 UpgradesPerLevel = 1;
   int32 AllowedLevelsAbovePlayer = 2;
-  repeated int32 CandyCost = 3;
-  repeated int32 StardustCost = 4;
+  repeated int32 CandyCost = 3 [packed=true];
+  repeated int32 StardustCost = 4 [packed=true];
 }
 message EquippedBadgeSettingsProto {
   int64 EquipBadgeCooldownMs = 1;
@@ -557,7 +557,7 @@ message SetFavoritePokemonOutProto {
 }
 message ReleasePokemonProto {
   uint64 PokemonId = 1;
-  repeated uint64 PokemonIds = 2;
+  repeated uint64 PokemonIds = 2 [packed=true];
 }
 message ReleasePokemonOutProto {
   Rpc.Types.ReleasePokemonOutProto.Status Status = 1;
@@ -621,7 +621,7 @@ message CheckAwardedBadgesProto {
 message CheckAwardedBadgesOutProto {
   bool Success = 1;
   repeated Rpc.HoloBadgeType AwardedBadges = 2;
-  repeated int32 AwardedBadgeLevels = 3;
+  repeated int32 AwardedBadgeLevels = 3 [packed=true];
 }
 message PtcToken {
   string Token = 1;

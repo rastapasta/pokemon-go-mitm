@@ -30,15 +30,19 @@ proxy.onRequest (ctx, callback) ->
     requestChunks.push chunk
     callback null, chunk
 
+  requested = []
+
   ctx.onRequestEnd (ctx, callback) ->
     buffer = Buffer.concat requestChunks
     data = decodeData RequestEnvelop, buffer
     
     for request in data.parameter
-      protoId = getProtoFromKey(request.key, true)
+      requested.push getProtoFromKey request.key, false
+
+      protoId = getProtoFromKey request.key, true
       decoded = decodeData rpcProto.Holoholo.Rpc[protoId], request.value
 
-      console.log "[+] Request for #{protoId}", decoded
+      console.log "[+] Request for #{protoId}", decoded if decoded
 
     # TODO: inject changes before forwarding request
     callback()
@@ -53,7 +57,9 @@ proxy.onRequest (ctx, callback) ->
     buffer = Buffer.concat responseChunks
 
     data = decodeData ResponseEnvelop, buffer
-    console.log "[+] Response: ", data if data
+    for id,response of data.returns
+      decoded = decodeData rpcProto.Holoholo.Rpc[requested[id]], response.buffer
+      console.log "[+] Response for #{requested[id]}: ", decoded if decoded
 
     # TODO: inject changes before forwarding response
     ctx.proxyToClientResponse.write buffer
@@ -74,15 +80,13 @@ decodeData = (scheme, data) ->
     if e.decoded
       console.warn "[+] though it got partialy decoded"
       decoded = e.decoded
-    else
-      console.warn "[-] and nothing got decoded"
   decoded
 
 getKeyByValue = (object, value) ->
   Object.keys(object).find (key) -> object[key] is value
 
 getProtoFromKey = (key, request) ->
-  upperCamelCase(getKeyByValue(rpcProto.Holoholo.Rpc.Method,key))+"Proto"+(if request then "" else "Out")
+  upperCamelCase(getKeyByValue(rpcProto.Holoholo.Rpc.Method,key))+(if request then "Proto" else "OutProto")
 
 proxy.listen port: port
 console.log "[+] listening on #{port}"
