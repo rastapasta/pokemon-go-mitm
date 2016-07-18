@@ -1,18 +1,17 @@
 ###
   Pokemon Go (c) MITM node proxy
+
+  (c) by 
 ###
 
 Proxy = require 'http-mitm-proxy'
-protobuf = require 'protobufjs'
+protobuf = require 'node-protobuf'
 upperCamelCase = require 'uppercamelcase'
 fs = require 'fs'
 
 port = 8081
 
-# Initiate the protbuf definitions
-rpcProto = protobuf.loadProtoFile('proto/rpc.proto').build()
-RequestEnvelop = rpcProto.Holoholo.Rpc.RpcRequestEnvelopeProto
-ResponseEnvelop = rpcProto.Holoholo.Rpc.RpcResponseEnvelopeProto
+POGOProtos = new p fs.readFileSync "POGOProtos.desc"
 
 # Setup the MITM proxy
 proxy = Proxy()
@@ -31,18 +30,22 @@ proxy.onRequest (ctx, callback) ->
     callback null, chunk
 
   requested = []
-
   ctx.onRequestEnd (ctx, callback) ->
     buffer = Buffer.concat requestChunks
-    data = decodeData RequestEnvelop, buffer
-    
-    for request in data.parameter
-      requested.push getProtoFromKey request.key, false
+    data = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.RequestEnvelope"
+    for request in data.requests
+      protoId = upperCamelCase request.request_type
+      
+      # Queue the ProtoId for the response handling
+      requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
+      
+      decoded = if request.request_message
+        POGOProtos.parse request.request_message, "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
+      else {}
+      
+      console.log "[+] Request for #{protoId}", decoded
 
-      protoId = getProtoFromKey request.key, true
-      decoded = decodeData rpcProto.Holoholo.Rpc[protoId], request.value
-
-      console.log "[+] Request for #{protoId}", decoded if decoded
+    console.log "[+] Waiting for response..."
 
     # TODO: inject changes before forwarding request
     callback()
@@ -55,11 +58,15 @@ proxy.onRequest (ctx, callback) ->
 
   ctx.onResponseEnd (ctx, callback) ->
     buffer = Buffer.concat responseChunks
+    data = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
 
-    data = decodeData ResponseEnvelop, buffer
     for id,response of data.returns
-      decoded = decodeData rpcProto.Holoholo.Rpc[requested[id]], response.buffer
-      console.log "[+] Response for #{requested[id]}: ", decoded if decoded
+      proto = requested[id]
+      if proto in POGOProtos.info()
+        decoded = POGOProtos.parse response, proto
+        console.log "[+] Response for #{proto}: ", decoded
+      else
+        console.log "[-] Response handler for #{requested[id]} not implemented yet.."
 
     # TODO: inject changes before forwarding response
     ctx.proxyToClientResponse.write buffer
@@ -70,23 +77,6 @@ proxy.onRequest (ctx, callback) ->
 proxy.onError (ctx, err, errorKind) ->
   url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
   console.error errorKind + ' on ' + url + ':', err
-
-
-decodeData = (scheme, data) ->
-  try
-    decoded = scheme.decode data
-  catch e
-    console.warn "[-] parsing protbuf buffer failed: #{e}"
-    if e.decoded
-      console.warn "[+] though it got partialy decoded"
-      decoded = e.decoded
-  decoded
-
-getKeyByValue = (object, value) ->
-  Object.keys(object).find (key) -> object[key] is value
-
-getProtoFromKey = (key, request) ->
-  upperCamelCase(getKeyByValue(rpcProto.Holoholo.Rpc.Method,key))+(if request then "Proto" else "OutProto")
 
 proxy.listen port: port
 console.log "[+] listening on #{port}"
