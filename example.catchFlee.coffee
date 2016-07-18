@@ -8,7 +8,9 @@
   Be aware: This triggers an error message in the App but won't interfere further on
 ###
 
-server = new PokemonGoMITM port: 8081, debug: true
+PokemonGoMITM = require './lib/pokemon-go-mitm'
+
+server = new PokemonGoMITM port: 8081
 	.setResponseHandler "CatchPokemon", (data) ->
 		data.status = 'CATCH_FLEE' if data.status is 'CATCH_SUCCESS'
 		data

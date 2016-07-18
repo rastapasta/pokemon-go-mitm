@@ -39,7 +39,7 @@ class PokemonGoMITM
     requestChunks = []
     ctx.onRequestData (ctx, chunk, callback) =>
       requestChunks.push chunk
-      callback null, chunk
+      callback null, null
 
     requested = []
     ctx.onRequestEnd (ctx, callback) =>
@@ -63,16 +63,16 @@ class PokemonGoMITM
         else {}
         
         if overwrite = @handleRequest protoId, decoded
-          @debug "[!] Overwriting "+proto
-          data[id] = POGOProtos.serialize overwrite, proto
+          @log "[!] Overwriting "+proto
+          request.request_message = POGOProtos.serialize overwrite, proto
           recode = true
   
-      console.log "[+] Waiting for response..."
+      @log "[+] Waiting for response..."
       
       if recode
         buffer = POGOProtos.serialize data, @requestEnvelope
-
-      # TODO: inject changes back into the POST body
+      
+      ctx.proxyToServerRequest.write buffer
       callback()
 
     ### Server Response Handling ###
