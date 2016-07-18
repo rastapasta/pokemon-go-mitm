@@ -10,6 +10,9 @@ upperCamelCase = require 'uppercamelcase'
 fs = require 'fs'
 
 class PokemonGoMITM
+  responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
+  requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+
   constructor: (@port) ->
     throw "[-] No port given" unless @port
 
@@ -43,8 +46,10 @@ class PokemonGoMITM
     requested = []
     ctx.onRequestEnd (ctx, callback) =>
       buffer = Buffer.concat requestChunks
-      data = @POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.RequestEnvelope"
-      for request in data.requests
+      data = @POGOProtos.parse buffer, @requestEnvelope
+      recode = false
+
+      for id,request of data.requests
         protoId = upperCamelCase request.request_type
       
         # Queue the ProtoId for the response handling
@@ -58,11 +63,18 @@ class PokemonGoMITM
         decoded = if request.request_message
           @POGOProtos.parse request.request_message, proto
         else {}
+        
+        if overwrite = @handleMessage protoId, decoded
+          console.log "[!] Overwriting "+proto+" with ", decoded
+          data[id] = @POGOProtos.serialize overwrite, proto
+          recode = true
   
-        console.log "[+] Request for #{protoId}", decoded
-
       console.log "[+] Waiting for response..."
-      # TODO: inject changes before forwarding request
+      
+      if recode
+        buffer = @POGOProtos.serialize data, @requestEnvelope
+
+      # TODO: inject changes back into the POST body
       callback()
 
     ### Server Response Handling ###
@@ -73,18 +85,29 @@ class PokemonGoMITM
 
     ctx.onResponseEnd (ctx, callback) =>
       buffer = Buffer.concat responseChunks
-      data = @POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
+      data = @POGOProtos.parse buffer, @responseEnvelope
+      recode = false
 
       for id,response of data.returns
         proto = requested[id]
         if proto in @POGOProtos.info()
           decoded = @POGOProtos.parse response, proto
-          console.log "[+] Response for #{proto}: ", decoded
+          
+          protoId = proto.split(/\./).pop()
+
+          if overwrite = @handleResponse protoId, decoded
+            console.log "[!] Overwriting "+protoId+" with ", overwrite
+            data.returns[id] = @POGOProtos.serialize overwrite, proto
+            recode = true
+
         else
           console.log "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
-      # TODO: inject changes before forwarding response
-      ctx.proxyToClientResponse.write buffer
+      # Overwrite the response in case a hook hit the fan
+      if recode
+        buffer = @POGOProtos.serialize data, @responseEnvelope
+
+      ctx.proxyToClientResponse.end buffer
       callback()
 
     callback()
@@ -92,5 +115,13 @@ class PokemonGoMITM
   handleProxyError: (ctx, err, errorKind) =>
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
     console.error errorKind + ' on ' + url + ':', err
+
+  handleMessage: (proto, data) ->
+    console.log "[+] Request for action #{proto}: ", data
+    return false
+
+  handleResponse: (proto, data) ->
+    console.log "[+] Response for action #{proto}: ", data
+    return false
 
 module.exports = PokemonGoMITM
