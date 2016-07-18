@@ -3,23 +3,16 @@
 ###
 
 Proxy = require 'http-mitm-proxy'
-
-# TODO: figure out the optimal protbuf lib
 protobuf = require 'protobufjs'
-
-# previously tried but with bad handling of unknown protbuf fields:
-# protobuf = require 'protocol-buffers'
-# protobuf = require 'node-protobuf'
-
+upperCamelCase = require 'uppercamelcase'
 fs = require 'fs'
 
 port = 8081
 
 # Initiate the protbuf definitions
-builder = protobuf.loadProtoFile 'pokemon.proto'
-pokemonProto = builder.build()
-RequestEnvelop = pokemonProto.RequestEnvelop
-ResponseEnvelop = pokemonProto.ResponseEnvelop
+rpcProto = protobuf.loadProtoFile('proto/rpc.proto').build()
+RequestEnvelop = rpcProto.Holoholo.Rpc.RpcRequestEnvelopeProto
+ResponseEnvelop = rpcProto.Holoholo.Rpc.RpcResponseEnvelopeProto
 
 # Setup the MITM proxy
 proxy = Proxy()
@@ -40,7 +33,12 @@ proxy.onRequest (ctx, callback) ->
   ctx.onRequestEnd (ctx, callback) ->
     buffer = Buffer.concat requestChunks
     data = decodeData RequestEnvelop, buffer
-    console.log "request", data
+    
+    for request in data.parameter
+      protoId = getProtoFromKey(request.key, true)
+      decoded = decodeData rpcProto.Holoholo.Rpc[protoId], request.value
+
+      console.log "[+] Request for #{protoId}", decoded
 
     # TODO: inject changes before forwarding request
     callback()
@@ -55,7 +53,7 @@ proxy.onRequest (ctx, callback) ->
     buffer = Buffer.concat responseChunks
 
     data = decodeData ResponseEnvelop, buffer
-    console.log "response", data
+    console.log "[+] Response: ", data if data
 
     # TODO: inject changes before forwarding response
     ctx.proxyToClientResponse.write buffer
@@ -80,6 +78,11 @@ decodeData = (scheme, data) ->
       console.warn "[-] and nothing got decoded"
   decoded
 
+getKeyByValue = (object, value) ->
+  Object.keys(object).find (key) -> object[key] is value
+
+getProtoFromKey = (key, request) ->
+  upperCamelCase(getKeyByValue(rpcProto.Holoholo.Rpc.Method,key))+"Proto"+(if request then "" else "Out")
 
 proxy.listen port: port
 console.log "[+] listening on #{port}"

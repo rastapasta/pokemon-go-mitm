@@ -1,0 +1,78 @@
+syntax = "proto3";
+package Holoholo.Rpc;
+import public "holoholo_shared.proto";
+
+message StartGymBattleProto {
+  string GymId = 1;
+  repeated uint64 AttackingPokemonId = 2;
+  uint64 DefendingPokemonId = 3;
+  double PlayerLatDegrees = 4;
+  double PlayerLngDegrees = 5;
+}
+message StartGymBattleOutProto {
+  Rpc.Types.StartGymBattleOutProto.Result Result = 1;
+  int64 BattleStartMs = 2;
+  int64 BattleEndMs = 3;
+  string BattleId = 4;
+  BattleParticipantProto Defender = 5;
+  BattleLogProto BattleLog = 6;
+}
+message AttackGymProto {
+  string GymId = 1;
+  string BattleId = 2;
+  repeated BattleActionProto AttackerActions = 3;
+  BattleActionProto LastRetrievedAction = 4;
+  double PlayerLatDegrees = 5;
+  double PlayerLngDegrees = 6;
+}
+message BattleActionProto {
+  Rpc.Types.BattleActionProto.ActionType Type = 1;
+  int64 ActionStartMs = 2;
+  int32 DurationMs = 3;
+  int32 EnergyDelta = 5;
+  int32 AttackerIndex = 6;
+  int32 TargetIndex = 7;
+  uint64 ActivePokemonId = 8;
+  BattleParticipantProto JoinedPlayer = 9;
+  BattleResultsProto BattleResults = 10;
+  int64 DamageWindowStartMs = 11;
+  int64 DamageWindowEndMs = 12;
+  BattleParticipantProto QuitPlayer = 13;
+  uint64 TargetPokemonId = 14;
+}
+message AttackGymOutProto {
+  Rpc.Types.AttackGymOutProto.Result Result = 1;
+  BattleLogProto BattleLog = 2;
+  string BattleId = 3;
+  PokemonInfo ActiveDefender = 4;
+  PokemonInfo ActiveAttacker = 5;
+}
+message BattleParticipantProto {
+  PokemonInfo ActivePokemon = 1;
+  PlayerPublicProfileProto TrainerPublicProfile = 2;
+  repeated PokemonInfo ReservePokemon = 3;
+  repeated PokemonInfo DefeatedPokemon = 4;
+}
+message BattleLogProto {
+  Rpc.Types.BattleLogProto.State State = 1;
+  Rpc.Types.BattleLogProto.BattleType BattleType = 2;
+  int64 ServerMs = 3;
+  repeated BattleActionProto BattleActions = 4;
+  int64 BattleStartMs = 5;
+  int64 BattleEndMs = 6;
+}
+message BattleResultsProto {
+  GymStateProto GymState = 1;
+  repeated BattleParticipantProto Attackers = 2;
+  repeated int32 PlayerXpAwarded = 3;
+  int64 NextDefenderPokemonId = 4;
+  int32 GymPointsDelta = 5;
+}
+
+message PokemonInfo {
+  PokemonProto Pokemon = 1;
+  int32 CurrentHealth = 2;
+  int32 CurrentEnergy = 3;
+}
+
+

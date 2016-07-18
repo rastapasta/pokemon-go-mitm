@@ -1,0 +1,1438 @@
+syntax = "proto3";
+package Holoholo.Rpc;
+import public "holoholo_shared.proto";
+
+message GoogleAuthEventParams {
+}
+message ChannelAuthEventParams {
+}
+message LocationUpdateEventParams {
+}
+message RpcResponseEventParams {
+}
+message GoogleToken {
+}
+message AssetDigestRequestProto {
+  Rpc.Platform Platform = 1;
+  string DeviceManufacturer = 2;
+  string DeviceModel = 3;
+  string Locale = 4;
+  uint32 AppVersion = 5;
+}
+message AssetDigestEntryProto {
+  string AssetId = 1;
+  string BundleName = 2;
+  int64 Version = 3;
+  uint32 Checksum = 4;
+  int32 Size = 5;
+  bytes Key = 6;
+}
+message AssetDigestOutProto {
+  repeated AssetDigestEntryProto Digest = 1;
+  uint64 Timestamp = 2;
+}
+message DownloadUrlRequestProto {
+  repeated string AssetId = 1;
+}
+message DownloadUrlEntryProto {
+  string AssetId = 1;
+  string Url = 2;
+  int32 Size = 3;
+  uint32 Checksum = 4;
+}
+message DownloadUrlOutProto {
+  repeated DownloadUrlEntryProto DownloadUrls = 1;
+}
+message CollectDailyBonusProto {
+}
+message CollectDailyBonusOutProto {
+  Rpc.Types.CollectDailyBonusOutProto.Result Result = 1;
+}
+message CollectDailyDefenderBonusProto {
+}
+message CollectDailyDefenderBonusOutProto {
+  Rpc.Types.CollectDailyDefenderBonusOutProto.Result Result = 1;
+  repeated string CurrencyType = 2;
+  repeated int32 CurrencyAwarded = 3;
+  int32 NumDefenders = 4;
+}
+message EchoProto {
+}
+message EchoOutProto {
+  string Context = 1;
+}
+message GetHatchedEggsProto {
+}
+message GetHatchedEggsOutProto {
+  bool Success = 1;
+  repeated uint64 PokemonId = 2;
+  repeated int32 ExpAwarded = 3;
+  repeated int32 CandyAwarded = 4;
+  repeated int32 StardustAwarded = 5;
+}
+message EncounterProto {
+  uint64 EncounterId = 1;
+  string SpawnpointId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message EncounterOutProto {
+  WildPokemonProto Pokemon = 1;
+  Rpc.Types.EncounterOutProto.Background Background = 2;
+  Rpc.Types.EncounterOutProto.Status Status = 3;
+  CaptureProbabilityProto CaptureProbability = 4;
+}
+message CatchPokemonProto {
+  uint64 EncounterId = 1;
+  int32 Pokeball = 2;
+  double NormalizedReticleSize = 3;
+  string SpawnPointGuid = 4;
+  bool HitPokemon = 5;
+  double SpinModifier = 6;
+  double NormalizedHitPosition = 7;
+}
+message CatchPokemonOutProto {
+  Rpc.Types.CatchPokemonOutProto.Status Status = 1;
+  double MissPercent = 2;
+  uint64 CapturedPokemonId = 3;
+  CaptureScoreProto Scores = 4;
+}
+message UseItemCaptureProto {
+  Rpc.Item Item = 1;
+  uint64 EncounterId = 2;
+  string SpawnPointGuid = 3;
+}
+message UseItemCaptureOutProto {
+  bool Success = 1;
+  double ItemCaptureMult = 2;
+  double ItemFleeMult = 3;
+  bool StopMovement = 4;
+  bool StopAttack = 5;
+  bool TargetMax = 6;
+  bool TargetSlow = 7;
+}
+message EncounterTutorialCompleteProto {
+  int32 PokedexId = 1;
+}
+message EncounterTutorialCompleteOutProto {
+  Rpc.Types.EncounterTutorialCompleteOutProto.Result Result = 1;
+  PokemonProto Pokemon = 2;
+  CaptureScoreProto Scores = 3;
+}
+message CaptureProbabilityProto {
+  repeated Rpc.Item PokeballType = 1;
+  repeated float CaptureProbability = 2;
+  double ReticleDifficultyScale = 12;
+}
+message CaptureScoreProto {
+  repeated Rpc.HoloActivityType ActivityType = 1;
+  repeated int32 Exp = 2;
+  repeated int32 Candy = 3;
+  repeated int32 Stardust = 4;
+}
+message UseIncenseActionProto {
+  Rpc.Item IncenseType = 1;
+}
+message UseIncenseActionOutProto {
+  Rpc.Types.UseIncenseActionOutProto.Result Result = 1;
+  AppliedItemProto AppliedIncense = 2;
+}
+message GetIncensePokemonProto {
+  double PlayerLatDegrees = 1;
+  double PlayerLngDegrees = 2;
+}
+message GetIncensePokemonOutProto {
+  Rpc.Types.GetIncensePokemonOutProto.Result Result = 1;
+  int32 PokemonTypeId = 2;
+  double Lat = 3;
+  double Lng = 4;
+  string EncounterLocation = 5;
+  uint64 EncounterId = 6;
+  int64 DisappearTimeMs = 7;
+}
+message IncenseEncounterProto {
+  int64 EncounterId = 1;
+  string EncounterLocation = 2;
+}
+message IncenseEncounterOutProto {
+  Rpc.Types.IncenseEncounterOutProto.Result Result = 1;
+  PokemonProto Pokemon = 2;
+  CaptureProbabilityProto CaptureProbability = 3;
+}
+message DiskEncounterProto {
+  int64 EncounterId = 1;
+  string FortId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message DiskEncounterOutProto {
+  Rpc.Types.DiskEncounterOutProto.Result Result = 1;
+  PokemonProto Pokemon = 2;
+  CaptureProbabilityProto CaptureProbability = 3;
+}
+message EvolvePokemonProto {
+  uint64 PokemonId = 1;
+}
+message EvolvePokemonOutProto {
+  Rpc.Types.EvolvePokemonOutProto.Result Result = 1;
+  PokemonProto EvolvedPokemon = 2;
+  int32 ExpAwarded = 3;
+  int32 CandyAwarded = 4;
+}
+message FortDeployProto {
+  string FortId = 1;
+  uint64 PokemonId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message FortDeployOutProto {
+  Rpc.Types.FortDeployOutProto.Result Result = 1;
+  FortDetailsOutProto FortDetailsOutProto = 2;
+  PokemonProto EggPokemon = 3;
+  GymStateProto GymStateProto = 4;
+}
+message FortRecallProto {
+  string FortId = 1;
+  uint64 PokemonId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message FortRecallOutProto {
+  Rpc.Types.FortRecallOutProto.Result Result = 1;
+  FortDetailsOutProto FortDetailsOutProto = 2;
+}
+message AddFortModifierProto {
+  Rpc.Item ModifierType = 1;
+  string FortId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message AddFortModifierOutProto {
+  Rpc.Types.AddFortModifierOutProto.Result Result = 1;
+  FortDetailsOutProto FortDetailsOutProto = 2;
+}
+message PokemonCameraAttributesProto {
+  float DiskRadiusM = 1;
+  float CylRadiusM = 2;
+  float CylHeightM = 3;
+  float CylGroundM = 4;
+  float ShoulderModeScale = 5;
+}
+message PokemonEncounterAttributesProto {
+  float BaseCaptureRate = 1;
+  float BaseFleeRate = 2;
+  float CollisionRadiusM = 3;
+  float CollisionHeightM = 4;
+  float CollisionHeadRadiusM = 5;
+  Rpc.HoloPokemonMovementType MovementType = 6;
+  float MovementTimerS = 7;
+  float JumpTimeS = 8;
+  float AttackTimerS = 9;
+}
+message PokemonStatsAttributesProto {
+  int32 BaseStamina = 1;
+  int32 BaseAttack = 2;
+  int32 BaseDefense = 3;
+  int32 DodgeEnergyDelta = 8;
+}
+message PokemonSettingsProto {
+  Rpc.HoloPokemonId UniqueId = 1;
+  float ModelScale = 3;
+  Rpc.HoloPokemonType Type1 = 4;
+  Rpc.HoloPokemonType Type2 = 5;
+  PokemonCameraAttributesProto Camera = 6;
+  PokemonEncounterAttributesProto Encounter = 7;
+  PokemonStatsAttributesProto Stats = 8;
+  repeated Rpc.HoloPokemonMove QuickMoves = 9;
+  repeated Rpc.HoloPokemonMove CinematicMoves = 10;
+  repeated float AnimTime = 11;
+  repeated Rpc.HoloPokemonId Evolution = 12;
+  int32 EvolutionPips = 13;
+  Rpc.HoloPokemonClass PokemonClass = 14;
+  float PokedexHeightM = 15;
+  float PokedexWeightKg = 16;
+  Rpc.HoloPokemonId ParentId = 17;
+  float HeightStdDev = 18;
+  float WeightStdDev = 19;
+  float KmDistanceToHatch = 20;
+  Rpc.HoloPokemonFamilyId FamilyId = 21;
+  int32 CandyToEvolve = 22;
+}
+message PokeBallAttributesProto {
+  Rpc.HoloItemEffect ItemEffect = 1;
+  float CaptureMulti = 2;
+  float CaptureMultiEffect = 3;
+  float ItemEffectMod = 4;
+}
+message PotionAttributesProto {
+  float StaPercent = 1;
+  int32 StaAmount = 2;
+}
+message ReviveAttributesProto {
+  float StaPercent = 1;
+}
+message BattleAttributesProto {
+  float StaPercent = 1;
+  float AtkPercent = 2;
+  float DefPercent = 3;
+  float DurationS = 4;
+}
+message FoodAttributesProto {
+  repeated Rpc.HoloItemEffect ItemEffect = 1;
+  repeated float ItemEffectPercent = 2;
+  float GrowthPercent = 3;
+}
+message InventoryUpgradeAttributesProto {
+  int32 AdditionalStorage = 1;
+  Rpc.InventoryUpgradeType UpgradeType = 2;
+}
+message ExperienceBoostAttributesProto {
+  float XpMultiplier = 1;
+  int32 BoostDurationMs = 2;
+}
+message EggIncubatorAttributesProto {
+  Rpc.EggIncubatorType IncubatorType = 1;
+  int32 Uses = 2;
+  float DistanceMultiplier = 3;
+}
+message IncenseAttributesProto {
+  int32 IncenseLifetimeSeconds = 1;
+  repeated Rpc.HoloPokemonType PokemonType = 2;
+  float PokemonIncenseTypeProbability = 3;
+  int32 StandingTimeBetweenEncountersSec = 4;
+  int32 MovingTimeBetweenEncounterSec = 5;
+  int32 DistanceRequiredForShorterIntervalMeters = 6;
+  int32 PokemonAttractedLengthSec = 7;
+}
+message FortModifierAttributesProto {
+  int32 ModifierLifetimeSeconds = 1;
+  int32 TroyDiskNumPokemonSpawned = 2;
+}
+message ItemSettingsProto {
+  Rpc.Item UniqueId = 1;
+  Rpc.HoloItemType ItemType = 2;
+  Rpc.HoloItemCategory Category = 3;
+  float DropFreq = 4;
+  int32 DropTrainerLevel = 5;
+  PokeBallAttributesProto Pokeball = 6;
+  PotionAttributesProto Potion = 7;
+  ReviveAttributesProto Revive = 8;
+  BattleAttributesProto Battle = 9;
+  FoodAttributesProto Food = 10;
+  InventoryUpgradeAttributesProto InventoryUpgrade = 11;
+  ExperienceBoostAttributesProto XpBoost = 12;
+  IncenseAttributesProto Incense = 13;
+  EggIncubatorAttributesProto EggIncubator = 14;
+  FortModifierAttributesProto FortModifier = 15;
+}
+message MoveSettingsProto {
+  Rpc.HoloPokemonMove UniqueId = 1;
+  int32 AnimationId = 2;
+  Rpc.HoloPokemonType Type = 3;
+  float Power = 4;
+  float AccuracyChance = 5;
+  float CriticalChance = 6;
+  float HealScalar = 7;
+  float StaminaLossScalar = 8;
+  int32 TrainerLevelMin = 9;
+  int32 TrainerLevelMax = 10;
+  string VfxName = 11;
+  int32 DurationMs = 12;
+  int32 DamageWindowStartMs = 13;
+  int32 DamageWindowEndMs = 14;
+  int32 EnergyDelta = 15;
+}
+message MoveSequenceSettingsProto {
+  repeated string Sequence = 1;
+}
+message TypeEffectiveSettingsProto {
+  Rpc.HoloPokemonType AttackType = 2;
+  repeated float AttackScalar = 1;
+}
+message BadgeSettingsProto {
+  Rpc.HoloBadgeType BadgeType = 1;
+  int32 BadgeRanks = 2;
+  repeated int32 Targets = 3;
+}
+message CameraSettingsProto {
+  string NextCamera = 1;
+  repeated Rpc.CameraInterpolation Interpolation = 2;
+  repeated Rpc.CameraTarget TargetType = 3;
+  repeated float EaseInSpeed = 4;
+  repeated float EaseOutSpeed = 5;
+  repeated float DurationS = 6;
+  repeated float WaitS = 7;
+  repeated float TransitionS = 8;
+  repeated float AngleDeg = 9;
+  repeated float AngleOffsetDeg = 10;
+  repeated float PitchDeg = 11;
+  repeated float PitchOffsetDeg = 12;
+  repeated float RollDeg = 13;
+  repeated float DistanceM = 14;
+  repeated float HeightPercent = 15;
+  repeated float VertCtrRatio = 16;
+}
+message PlayerLevelSettingsProto {
+  repeated int32 RankNum = 1;
+  repeated int32 RequiredExp = 2;
+  repeated float CpMultiplier = 3;
+  int32 MaxEggPlayerLevel = 4;
+  int32 MaxEncounterPlayerLevel = 5;
+}
+message GymLevelSettingsProto {
+  repeated int32 RequiredExp = 1;
+  repeated int32 LeaderSlots = 2;
+  repeated int32 TrainerSlots = 3;
+  repeated int32 SearchRollBonus = 4;
+}
+message GymBattleSettingsProto {
+  float EnergyPerSec = 1;
+  float DodgeEnergyCost = 2;
+  float RetargetSeconds = 3;
+  float EnemyAttackInterval = 4;
+  float AttackServerInterval = 5;
+  float RoundDurationSeconds = 6;
+  float BonusTimePerAllySeconds = 7;
+  int32 MaximumAttackersPerBattle = 8;
+  float SameTypeAttackBonusMultiplier = 9;
+  int32 MaximumEnergy = 10;
+  float EnergyDeltaPerHealthLost = 11;
+  int32 DodgeDurationMs = 12;
+  int32 MinimumPlayerLevel = 13;
+  int32 SwapDurationMs = 14;
+}
+message EncounterSettingsProto {
+  float SpinBonusThreshold = 1;
+  float ExcellentThrowThreshold = 2;
+  float GreatThrowThreshold = 3;
+  float NiceThrowThreshold = 4;
+  int32 MilestoneThreshold = 5;
+}
+message PokemonUpgradeSettingsProto {
+  int32 UpgradesPerLevel = 1;
+  int32 AllowedLevelsAbovePlayer = 2;
+  repeated int32 CandyCost = 3;
+  repeated int32 StardustCost = 4;
+}
+message EquippedBadgeSettingsProto {
+  int64 EquipBadgeCooldownMs = 1;
+  repeated float CatchProbabilityBonus = 2;
+  repeated float FleeProbabilityBonus = 3;
+}
+message GameMasterClientTemplateProto {
+  string TemplateId = 1;
+  PokemonSettingsProto Pokemon = 2;
+  ItemSettingsProto Item = 3;
+  MoveSettingsProto Move = 4;
+  MoveSequenceSettingsProto MoveSequence = 5;
+  TypeEffectiveSettingsProto TypeEffective = 8;
+  BadgeSettingsProto Badge = 10;
+  CameraSettingsProto Camera = 11;
+  PlayerLevelSettingsProto PlayerLevel = 12;
+  GymLevelSettingsProto GymLevel = 13;
+  GymBattleSettingsProto BattleSettings = 14;
+  EncounterSettingsProto EncounterSettings = 15;
+  IapItemDisplayProto IapItemDisplay = 16;
+  IapSettingsProto IapSettings = 17;
+  PokemonUpgradeSettingsProto PokemonUpgrades = 18;
+  EquippedBadgeSettingsProto EquippedBadges = 19;
+}
+message GetGameMasterClientTemplatesProto {
+}
+message GetGameMasterClientTemplatesOutProto {
+  Rpc.Types.GetGameMasterClientTemplatesOutProto.Result Result = 1;
+  repeated GameMasterClientTemplateProto Items = 2;
+  uint64 Timestamp = 3;
+}
+message GetRemoteConfigVersionsProto {
+  Rpc.Platform Platform = 1;
+  string DeviceManufacturer = 2;
+  string DeviceModel = 3;
+  string Locale = 4;
+  uint32 AppVersion = 5;
+}
+message GetRemoteConfigVersionsOutProto {
+  Rpc.Types.GetRemoteConfigVersionsOutProto.Result Result = 1;
+  uint64 GameMasterTimestamp = 2;
+  uint64 AssetDigestTimestamp = 3;
+}
+
+
+message ActionLogEntry {
+  int64 TimestampMs = 1;
+  bool Sfida = 2;
+  oneof Action {
+    CatchPokemonLogEntry CatchPokemon = 3;
+    FortSearchLogEntry FortSearch = 4;
+  }
+}
+message CatchPokemonLogEntry {
+  Rpc.Types.CatchPokemonLogEntry.Result Result = 1;
+  int32 PokedexNumber = 2;
+  int32 CombatPoints = 3;
+  uint64 PokemonId = 4;
+}
+message FortSearchLogEntry {
+  Rpc.Types.FortSearchLogEntry.Result Result = 1;
+  string FortId = 2;
+  repeated ItemProto Items = 3;
+  int32 Eggs = 4;
+}
+
+message PlayerBadgeProto {
+  Rpc.HoloBadgeType BadgeType = 1;
+  int32 Rank = 2;
+  int32 StartValue = 3;
+  int32 EndValue = 4;
+  double CurrentValue = 5;
+}
+message PlayerProfileProto {
+  string PlayerName = 1;
+}
+message PlayerProfileOutProto {
+  Rpc.Types.PlayerProfileOutProto.Result Result = 1;
+  int64 StartTime = 2;
+  repeated PlayerBadgeProto Badges = 3;
+}
+message LevelUpRewardsProto {
+  int32 Level = 1;
+}
+message LevelUpRewardsOutProto {
+  Rpc.Types.LevelUpRewardsOutProto.Result Result = 1;
+  repeated AwardItemProto Items = 2;
+  repeated Rpc.Item ItemsUnlocked = 4;
+}
+
+message ClientPlayerProto {
+  int64 CreationTimeMs = 1;
+  string Name = 2;
+  int32 Team = 5;
+  repeated Rpc.TutorialCompletion TutorialComplete = 7;
+  PlayerAvatarProto PlayerAvatarProto = 8;
+  int32 MaxPokemonStorage = 9;
+  int32 MaxItemStorage = 10;
+  DailyBonusProto DailyBonusProto = 11;
+  EquippedBadgeProto EquippedBadgeProto = 12;
+  ContactSettingsProto ContactSettingsProto = 13;
+  repeated CurrencyQuantityProto CurrencyBalance = 14;
+}
+message CurrencyQuantityProto {
+  string CurrencyType = 1;
+  int32 Quantity = 2;
+}
+message ContactSettingsProto {
+  bool SendMarketingEmails = 1;
+  bool SendPushNotifications = 2;
+}
+message DailyBonusProto {
+  int64 NextCollectTimestampMs = 1;
+  int64 NextDefenderBonusCollectTimestampMs = 2;
+}
+message EquippedBadgeProto {
+  Rpc.HoloBadgeType EquippedBadge = 1;
+  int32 Level = 2;
+  int64 NextEquipChangeAllowedTimestampMs = 3;
+}
+message GetPlayerProto {
+}
+message GetPlayerOutProto {
+  bool Success = 1;
+  ClientPlayerProto Player = 2;
+}
+message PlayerUpdateProto {
+  double Lat = 1;
+  double Lng = 2;
+}
+message PlayerUpdateOutProto {
+  repeated WildPokemonProto WildPokemon = 1;
+  repeated PokemonFortProto Fort = 2;
+  int32 FortsNearby = 3;
+}
+message SetFavoritePokemonProto {
+  int64 PokemonId = 1;
+  bool IsFavorite = 2;
+}
+message SetFavoritePokemonOutProto {
+  Rpc.Types.SetFavoritePokemonOutProto.Result Result = 1;
+}
+message ReleasePokemonProto {
+  uint64 PokemonId = 1;
+  repeated uint64 PokemonIds = 2;
+}
+message ReleasePokemonOutProto {
+  Rpc.Types.ReleasePokemonOutProto.Status Status = 1;
+  int32 CandyAwarded = 2;
+}
+message DebugDeletePlayerProto {
+}
+message DebugDeletePlayerOutProto {
+  bool Success = 1;
+}
+message GetSuggestedCodenamesRequestProto {
+}
+message GetSuggestedCodenamesResponseProto {
+  repeated string Codename = 1;
+  bool Success = 2;
+}
+message CheckCodenameAvailableRequestProto {
+  string Codename = 1;
+}
+message ClaimCodenameRequestProto {
+  string Codename = 1;
+}
+message CodenameResultProto {
+  string Codename = 1;
+  string UserMessage = 2;
+  bool IsAssignable = 3;
+  Rpc.Types.CodenameResultProto.Status Status = 4;
+}
+message SetAvatarProto {
+  PlayerAvatarProto PlayerAvatarProto = 2;
+}
+message SetAvatarOutProto {
+  Rpc.Types.SetAvatarOutProto.Status Status = 1;
+  ClientPlayerProto Player = 2;
+}
+message SetContactSettingsProto {
+  ContactSettingsProto ContactSettingsProto = 1;
+}
+message SetContactSettingsOutProto {
+  Rpc.Types.SetContactSettingsOutProto.Status Status = 1;
+  ClientPlayerProto Player = 2;
+}
+message SetPlayerTeamProto {
+  Rpc.Team Team = 1;
+}
+message SetPlayerTeamOutProto {
+  Rpc.Types.SetPlayerTeamOutProto.Status Status = 1;
+  ClientPlayerProto Player = 2;
+}
+message MarkTutorialCompleteProto {
+  repeated Rpc.TutorialCompletion TutorialComplete = 1;
+  bool SendMarketingEmails = 2;
+  bool SendPushNotifications = 3;
+}
+message MarkTutorialCompleteOutProto {
+  bool Success = 1;
+  ClientPlayerProto Player = 2;
+}
+message CheckAwardedBadgesProto {
+}
+message CheckAwardedBadgesOutProto {
+  bool Success = 1;
+  repeated Rpc.HoloBadgeType AwardedBadges = 2;
+  repeated int32 AwardedBadgeLevels = 3;
+}
+message PtcToken {
+  string Token = 1;
+  int32 Expiration = 2;
+}
+message EquipBadgeProto {
+  Rpc.HoloBadgeType Badge = 1;
+}
+message EquipBadgeOutProto {
+  Rpc.Types.EquipBadgeOutProto.Result Result = 1;
+  EquippedBadgeProto Equipped = 2;
+}
+message GetActionLogRequest {
+}
+message GetActionLogResponse {
+  Rpc.Types.GetActionLogResponse.Result Result = 1;
+  repeated ActionLogEntry Log = 2;
+}
+
+//These are new types to conform to the protocol more consistantly
+message SfidaActionLogProto{
+}
+message SfidaActionLogOutProto{
+  Rpc.Types.GetActionLogResponse.Result Result = 1;
+  repeated ActionLogEntry Log = 2;
+}
+
+message TradingSearchProto {
+  double Lat = 1;
+  double Lng = 2;
+}
+message TradingSearchOutProto {
+  Rpc.Types.TradingSearchOutProto.Result Result = 1;
+  repeated string PlayerNames = 2;
+}
+message TradingOfferProto {
+  string TradingPlayer = 1;
+  uint64 PokemonId = 2;
+}
+message TradingOfferOutProto {
+  Rpc.Types.TradingOfferOutProto.Result Result = 1;
+  uint64 TradeId = 2;
+}
+message PollForTradeResponseProto {
+  uint64 TradeId = 1;
+  uint64 PokemonId = 2;
+  bool RequestCancel = 3;
+}
+message PollForTradeResponseOutProto {
+  Rpc.Types.PollForTradeResponseOutProto.Result Result = 1;
+  PokemonProto ReturnPokemon = 2;
+}
+message TradingResultProto {
+  uint64 TradeId = 1;
+  bool PlayerAccept = 2;
+}
+message TradingResultOutProto {
+  Rpc.Types.TradingResultOutProto.Result Result = 1;
+}
+message UpgradePokemonProto {
+  uint64 PokemonId = 1;
+}
+message UpgradePokemonOutProto {
+  Rpc.Types.UpgradePokemonOutProto.Result Result = 1;
+  PokemonProto UpgradedPokemon = 2;
+}
+message UseItemPotionProto {
+  Rpc.Item Item = 1;
+  uint64 PokemonId = 2;
+}
+message UseItemPotionOutProto {
+  Rpc.Types.UseItemPotionOutProto.Result Result = 1;
+  int32 Stamina = 2;
+}
+message UseItemReviveProto {
+  Rpc.Item Item = 1;
+  uint64 PokemonId = 2;
+}
+message UseItemReviveOutProto {
+  Rpc.Types.UseItemReviveOutProto.Result Result = 1;
+  int32 Stamina = 2;
+}
+message UseItemGymProto {
+  Rpc.Item Item = 1;
+  string GymId = 2;
+  double PlayerLatDegrees = 3;
+  double PlayerLngDegrees = 4;
+}
+message UseItemGymOutProto {
+  Rpc.Types.UseItemGymOutProto.Result Result = 1;
+  int64 UpdatedGp = 2;
+}
+message UseItemXpBoostProto {
+  Rpc.Item Item = 1;
+}
+message UseItemXpBoostOutProto {
+  Rpc.Types.UseItemXpBoostOutProto.Result Result = 1;
+  AppliedItemsProto AppliedItems = 2;
+}
+message UseItemEggIncubatorProto {
+  string ItemId = 1;
+  int64 PokemondId = 2;
+}
+message UseItemEggIncubatorOutProto {
+  Rpc.Types.UseItemEggIncubatorOutProto.Result Result = 1;
+  EggIncubatorProto EggIncubator = 2;
+}
+
+message Niantic {
+  message Holoholo {
+    message Encounter {
+      enum EncounterResult {
+        CapturedPokemon = 0;
+        UserFled = 1;
+        PokemonFled = 2;
+        Error = 3;
+      }
+    }
+    message Gym {
+      enum ApproachMode {
+        BATTLE_PREP = 0;
+        DEPLOY = 1;
+        FRIENDLY_CHOICE = 2;
+        PICK_TEAM = 3;
+      }
+      message GymMinimapDot {
+        enum DotState {
+          EMPTY = 0;
+          FULL = 1;
+          LEADER = 2;
+        }
+      }
+      message AttackAffector {
+        enum FxPriority {
+          Neutral = 0;
+          Tap = 1;
+          Sequence = 2;
+        }
+      }
+    }
+    message Map {
+      enum PokemonEncounterResponse {
+        Success = 0;
+        Failure = 1;
+      }
+      message MapSpawnPoint {
+        enum VisibilityType {
+          Low = 0;
+          High = 1;
+        }
+      }
+      message MapGestureHandler {
+        enum PanGestureType {
+          Unknown = 0;
+          Pan = 1;
+          DragZoom = 2;
+          Tilt = 3;
+          Rotation = 4;
+        }
+      }
+      enum DayPeriod {
+        Day = 0;
+        Night = 1;
+      }
+    }
+    message Items {
+      enum IncubationResult {
+        SUCCESS = 0;
+        FAILURE = 1;
+      }
+      enum BuffSelectionState {
+        Canceled = 0;
+        Selected = 1;
+      }
+    }
+
+    message UserTasks {
+      enum TaskCompletionResult {
+        Success = 0;
+        Failed = 1;
+      }
+    }
+    message DeferredInvoke {
+      enum DeferMode {
+        Seconds = 0;
+        EndOfFrame = 1;
+      }
+    }
+    message Assets {
+      enum AssetRequestPriority {
+        Preload = 0;
+        Normal = 1;
+        Immediate = 2;
+      }
+    }
+    message Sfida {
+      message SfidaService {
+        enum State {
+          NO_CONNECTION = 0;
+          IDLE = 1;
+          FINDING_NOTIFY_POKESTOP = 2;
+          NOTIFYING_POKESTOP = 3;
+          SEARCH_RESULT = 4;
+          FINDING_NOTIFY_POKEMON = 5;
+          NOTIFYING_POKEMON = 6;
+          ENCOUNTER = 7;
+          CATCH = 8;
+          CATCH_RESULT = 9;
+          DOWSER = 10;
+          ERROR = 11;
+        }
+      }
+    }
+  }
+}
+enum UpdateType {
+	ADD = 0;
+	MODIFY = 1;
+	REMOVE = 2;
+	PREDICTED_MODIFY = 3;
+	PREDICTED_REMOVE = 4;
+	ROLLED_BACK_MODIFY = 5;
+	ROLLED_BACK_REMOVE = 6;
+}
+enum EnumScaleMode {
+	BRB = 0;
+	Maya = 1;
+	MayaWCurve = 2;
+}
+enum FovSide {
+	UP = 0;
+	DOWN = 1;
+	LEFT = 2;
+	RIGHT = 3;
+	NUM_SIDES = 4;
+}
+enum RemoteConfigurationType {
+	ASSET_DIGEST = 0;
+	GAME_MASTER = 1;
+}
+enum Command {
+	VFX = 0;
+	F2FVFX = 1;
+	SFX = 2;
+	CAM = 3;
+	ANIM = 4;
+	WAIT = 5;
+	SYS = 6;
+	SHAKE = 7;
+	SCALE = 8;
+	SINK = 9;
+	EVENT = 10;
+	MODE = 11;
+	HIDE = 12;
+	UNHIDE = 13;
+	SPIN = 14;
+	SQUISH = 15;
+	BACKGROUND = 16;
+	RESET_BACKGROUND = 17;
+	SILHOUETTE = 18;
+	RESET_SILHOUETTE = 19;
+	HIDE_OTHER = 20;
+	UNHIDE_OTHER = 21;
+	DSCVFX = 22;
+}
+enum TargetType {
+	MAIN_CAMERA = 0;
+	SPECIFIED_OBJECT = 1;
+}
+enum Effect {
+	NO_DAMAGE = 0;
+	REDUCED_DAMAGE = 1;
+	NORMAL_DAMAGE = 2;
+	INCREASED_DAMAGE = 3;
+}
+enum PokemonCreateContext {
+	CREATE_CONTEXT_WILD = 0;
+	CREATE_CONTEXT_EGG = 1;
+	CREATE_CONTEXT_EVOLVE = 2;
+}
+enum PlayerAvatarType {
+	PLAYER_AVATAR_UNSET = 0;
+	PLAYER_AVATAR_MALE = 1;
+	PLAYER_AVATAR_FEMALE = 2;
+}
+enum Team {
+	UNSET = 0;
+	TEAM_BLUE = 1;
+	TEAM_RED = 2;
+	TEAM_YELLOW = 3;
+}
+enum HoloPokemonType {
+	POKEMON_TYPE_NONE = 0;
+	POKEMON_TYPE_NORMAL = 1;
+	POKEMON_TYPE_FIGHTING = 2;
+	POKEMON_TYPE_FLYING = 3;
+	POKEMON_TYPE_POISON = 4;
+	POKEMON_TYPE_GROUND = 5;
+	POKEMON_TYPE_ROCK = 6;
+	POKEMON_TYPE_BUG = 7;
+	POKEMON_TYPE_GHOST = 8;
+	POKEMON_TYPE_STEEL = 9;
+	POKEMON_TYPE_FIRE = 10;
+	POKEMON_TYPE_WATER = 11;
+	POKEMON_TYPE_GRASS = 12;
+	POKEMON_TYPE_ELECTRIC = 13;
+	POKEMON_TYPE_PSYCHIC = 14;
+	POKEMON_TYPE_ICE = 15;
+	POKEMON_TYPE_DRAGON = 16;
+	POKEMON_TYPE_DARK = 17;
+	POKEMON_TYPE_FAIRY = 18;
+}
+enum HoloPokemonClass {
+	POKEMON_CLASS_NORMAL = 0;
+	POKEMON_CLASS_LEGENDARY = 1;
+	POKEMON_CLASS_MYTHIC = 2;
+}
+enum HoloPokemonNature {
+	NATURE_UNKNOWN = 0;
+	V0001_POKEMON_NATURE_STOIC = 1;
+	V0002_POKEMON_NATURE_ASSASSIN = 2;
+	V0003_POKEMON_NATURE_GUARDIAN = 3;
+	V0004_POKEMON_NATURE_RAIDER = 4;
+	V0005_POKEMON_NATURE_PROTECTOR = 5;
+	V0006_POKEMON_NATURE_SENTRY = 6;
+	V0007_POKEMON_NATURE_CHAMPION = 7;
+}
+enum HoloPokemonMovementType {
+	POKEMON_ENC_MOVEMENT_STATIC = 0;
+	POKEMON_ENC_MOVEMENT_JUMP = 1;
+	POKEMON_ENC_MOVEMENT_VERTICAL = 2;
+	POKEMON_ENC_MOVEMENT_PSYCHIC = 3;
+	POKEMON_ENC_MOVEMENT_ELECTRIC = 4;
+	POKEMON_ENC_MOVEMENT_FLYING = 5;
+	POKEMON_ENC_MOVEMENT_HOVERING = 6;
+}
+
+enum HoloItemCategory {
+	ITEM_CATEGORY_NONE = 0;
+	ITEM_CATEGORY_POKEBALL = 1;
+	ITEM_CATEGORY_FOOD = 2;
+	ITEM_CATEGORY_MEDICINE = 3;
+	ITEM_CATEGORY_BOOST = 4;
+	ITEM_CATEGORY_UTILITES = 5;
+	ITEM_CATEGORY_CAMERA = 6;
+	ITEM_CATEGORY_DISK = 7;
+	ITEM_CATEGORY_INCUBATOR = 8;
+	ITEM_CATEGORY_INCENSE = 9;
+	ITEM_CATEGORY_XP_BOOST = 10;
+	ITEM_CATEGORY_INVENTORY_UPGRADE = 11;
+}
+enum HoloItemEffect {
+	ITEM_EFFECT_NONE = 0;
+	ITEM_EFFECT_CAP_NO_FLEE = 1000;
+	ITEM_EFFECT_CAP_NO_MOVEMENT = 1002;
+	ITEM_EFFECT_CAP_NO_THREAT = 1003;
+	ITEM_EFFECT_CAP_TARGET_MAX = 1004;
+	ITEM_EFFECT_CAP_TARGET_SLOW = 1005;
+	ITEM_EFFECT_CAP_CHANCE_NIGHT = 1006;
+	ITEM_EFFECT_CAP_CHANCE_TRAINER = 1007;
+	ITEM_EFFECT_CAP_CHANCE_FIRST_THROW = 1008;
+	ITEM_EFFECT_CAP_CHANCE_LEGEND = 1009;
+	ITEM_EFFECT_CAP_CHANCE_HEAVY = 1010;
+	ITEM_EFFECT_CAP_CHANCE_REPEAT = 1011;
+	ITEM_EFFECT_CAP_CHANCE_MULTI_THROW = 1012;
+	ITEM_EFFECT_CAP_CHANCE_ALWAYS = 1013;
+	ITEM_EFFECT_CAP_CHANCE_SINGLE_THROW = 1014;
+}
+enum HoloActivityType {
+	ACTIVITY_UNKNOWN = 0;
+	ACTIVITY_CATCH_POKEMON = 1;
+	ACTIVITY_CATCH_LEGEND_POKEMON = 2;
+	ACTIVITY_FLEE_POKEMON = 3;
+	ACTIVITY_DEFEAT_FORT = 4;
+	ACTIVITY_EVOLVE_POKEMON = 5;
+	ACTIVITY_HATCH_EGG = 6;
+	ACTIVITY_WALK_KM = 7;
+	ACTIVITY_POKEDEX_ENTRY_NEW = 8;
+	ACTIVITY_CATCH_FIRST_THROW = 9;
+	ACTIVITY_CATCH_NICE_THROW = 10;
+	ACTIVITY_CATCH_GREAT_THROW = 11;
+	ACTIVITY_CATCH_EXCELLENT_THROW = 12;
+	ACTIVITY_CATCH_CURVEBALL = 13;
+	ACTIVITY_CATCH_FIRST_CATCH_OF_DAY = 14;
+	ACTIVITY_CATCH_MILESTONE = 15;
+	ACTIVITY_TRAIN_POKEMON = 16;
+	ACTIVITY_SEARCH_FORT = 17;
+	ACTIVITY_RELEASE_POKEMON = 18;
+	ACTIVITY_HATCH_EGG_SMALL_BONUS = 19;
+	ACTIVITY_HATCH_EGG_MEDIUM_BONUS = 20;
+	ACTIVITY_HATCH_EGG_LARGE_BONUS = 21;
+	ACTIVITY_DEFEAT_GYM_DEFENDER = 22;
+	ACTIVITY_DEFEAT_GYM_LEADER = 23;
+}
+enum HoloBadgeType {
+	BADGE_UNSET = 0;
+	BADGE_TRAVEL_KM = 1;
+	BADGE_POKEDEX_ENTRIES = 2;
+	BADGE_CAPTURE_TOTAL = 3;
+	BADGE_DEFEATED_FORT = 4;
+	BADGE_EVOLVED_TOTAL = 5;
+	BADGE_HATCHED_TOTAL = 6;
+	BADGE_ENCOUNTERED_TOTAL = 7;
+	BADGE_POKESTOPS_VISITED = 8;
+	BADGE_UNIQUE_POKESTOPS = 9;
+	BADGE_POKEBALL_THROWN = 10;
+	BADGE_BIG_MAGIKARP = 11;
+	BADGE_DEPLOYED_TOTAL = 12;
+	BADGE_BATTLE_ATTACK_WON = 13;
+	BADGE_BATTLE_TRAINING_WON = 14;
+	BADGE_BATTLE_DEFEND_WON = 15;
+	BADGE_PRESTIGE_RAISED = 16;
+	BADGE_PRESTIGE_DROPPED = 17;
+	BADGE_TYPE_NORMAL = 18;
+	BADGE_TYPE_FIGHTING = 19;
+	BADGE_TYPE_FLYING = 20;
+	BADGE_TYPE_POISON = 21;
+	BADGE_TYPE_GROUND = 22;
+	BADGE_TYPE_ROCK = 23;
+	BADGE_TYPE_BUG = 24;
+	BADGE_TYPE_GHOST = 25;
+	BADGE_TYPE_STEEL = 26;
+	BADGE_TYPE_FIRE = 27;
+	BADGE_TYPE_WATER = 28;
+	BADGE_TYPE_GRASS = 29;
+	BADGE_TYPE_ELECTRIC = 30;
+	BADGE_TYPE_PSYCHIC = 31;
+	BADGE_TYPE_ICE = 32;
+	BADGE_TYPE_DRAGON = 33;
+	BADGE_TYPE_DARK = 34;
+	BADGE_TYPE_FAIRY = 35;
+	BADGE_SMALL_RATTATA = 36;
+	BADGE_PIKACHU = 37;
+}
+enum CameraInterpolation {
+	CAM_INTERP_CUT = 0;
+	CAM_INTERP_LINEAR = 1;
+	CAM_INTERP_SMOOTH = 2;
+	CAM_INTERP_SMOOTH_ROT_LINEAR_MOVE = 3;
+	CAM_INTERP_DEPENDS = 4;
+}
+enum CameraTarget {
+	CAM_TARGET_ATTACKER = 0;
+	CAM_TARGET_ATTACKER_EDGE = 1;
+	CAM_TARGET_ATTACKER_GROUND = 2;
+	CAM_TARGET_DEFENDER = 3;
+	CAM_TARGET_DEFENDER_EDGE = 4;
+	CAM_TARGET_DEFENDER_GROUND = 5;
+	CAM_TARGET_ATTACKER_DEFENDER = 6;
+	CAM_TARGET_ATTACKER_DEFENDER_EDGE = 7;
+	CAM_TARGET_DEFENDER_ATTACKER = 8;
+	CAM_TARGET_DEFENDER_ATTACKER_EDGE = 9;
+	CAM_TARGET_ATTACKER_DEFENDER_MIRROR = 11;
+	CAM_TARGET_SHOULDER_ATTACKER_DEFENDER = 12;
+	CAM_TARGET_SHOULDER_ATTACKER_DEFENDER_MIRROR = 13;
+	CAM_TARGET_ATTACKER_DEFENDER_WORLD = 14;
+}
+enum HoloPokemonMove {
+	MOVE_UNSET = 0;
+	V0001_MOVE_THUNDER_SHOCK = 1;
+	V0002_MOVE_QUICK_ATTACK = 2;
+	V0003_MOVE_SCRATCH = 3;
+	V0004_MOVE_EMBER = 4;
+	V0005_MOVE_VINE_WHIP = 5;
+	V0006_MOVE_TACKLE = 6;
+	V0007_MOVE_RAZOR_LEAF = 7;
+	V0008_MOVE_TAKE_DOWN = 8;
+	V0009_MOVE_WATER_GUN = 9;
+	V0010_MOVE_BITE = 10;
+	V0011_MOVE_POUND = 11;
+	V0012_MOVE_DOUBLE_SLAP = 12;
+	V0013_MOVE_WRAP = 13;
+	V0014_MOVE_HYPER_BEAM = 14;
+	V0015_MOVE_LICK = 15;
+	V0016_MOVE_DARK_PULSE = 16;
+	V0017_MOVE_SMOG = 17;
+	V0018_MOVE_SLUDGE = 18;
+	V0019_MOVE_METAL_CLAW = 19;
+	V0020_MOVE_VICE_GRIP = 20;
+	V0021_MOVE_FLAME_WHEEL = 21;
+	V0022_MOVE_MEGAHORN = 22;
+	V0023_MOVE_WING_ATTACK = 23;
+	V0024_MOVE_FLAMETHROWER = 24;
+	V0025_MOVE_SUCKER_PUNCH = 25;
+	V0026_MOVE_DIG = 26;
+	V0027_MOVE_LOW_KICK = 27;
+	V0028_MOVE_CROSS_CHOP = 28;
+	V0029_MOVE_PSYCHO_CUT = 29;
+	V0030_MOVE_PSYBEAM = 30;
+	V0031_MOVE_EARTHQUAKE = 31;
+	V0032_MOVE_STONE_EDGE = 32;
+	V0033_MOVE_ICE_PUNCH = 33;
+	V0034_MOVE_HEART_STAMP = 34;
+	V0035_MOVE_DISCHARGE = 35;
+	V0036_MOVE_FLASH_CANNON = 36;
+	V0037_MOVE_PECK = 37;
+	V0038_MOVE_DRILL_PECK = 38;
+	V0039_MOVE_ICE_BEAM = 39;
+	V0040_MOVE_BLIZZARD = 40;
+	V0041_MOVE_AIR_SLASH = 41;
+	V0042_MOVE_HEAT_WAVE = 42;
+	V0043_MOVE_TWINEEDLE = 43;
+	V0044_MOVE_POISON_JAB = 44;
+	V0045_MOVE_AERIAL_ACE = 45;
+	V0046_MOVE_DRILL_RUN = 46;
+	V0047_MOVE_PETAL_BLIZZARD = 47;
+	V0048_MOVE_MEGA_DRAIN = 48;
+	V0049_MOVE_BUG_BUZZ = 49;
+	V0050_MOVE_POISON_FANG = 50;
+	V0051_MOVE_NIGHT_SLASH = 51;
+	V0052_MOVE_SLASH = 52;
+	V0053_MOVE_BUBBLE_BEAM = 53;
+	V0054_MOVE_SUBMISSION = 54;
+	V0055_MOVE_KARATE_CHOP = 55;
+	V0056_MOVE_LOW_SWEEP = 56;
+	V0057_MOVE_AQUA_JET = 57;
+	V0058_MOVE_AQUA_TAIL = 58;
+	V0059_MOVE_SEED_BOMB = 59;
+	V0060_MOVE_PSYSHOCK = 60;
+	V0061_MOVE_ROCK_THROW = 61;
+	V0062_MOVE_ANCIENT_POWER = 62;
+	V0063_MOVE_ROCK_TOMB = 63;
+	V0064_MOVE_ROCK_SLIDE = 64;
+	V0065_MOVE_POWER_GEM = 65;
+	V0066_MOVE_SHADOW_SNEAK = 66;
+	V0067_MOVE_SHADOW_PUNCH = 67;
+	V0068_MOVE_SHADOW_CLAW = 68;
+	V0069_MOVE_OMINOUS_WIND = 69;
+	V0070_MOVE_SHADOW_BALL = 70;
+	V0071_MOVE_BULLET_PUNCH = 71;
+	V0072_MOVE_MAGNET_BOMB = 72;
+	V0073_MOVE_STEEL_WING = 73;
+	V0074_MOVE_IRON_HEAD = 74;
+	V0075_MOVE_PARABOLIC_CHARGE = 75;
+	V0076_MOVE_SPARK = 76;
+	V0077_MOVE_THUNDER_PUNCH = 77;
+	V0078_MOVE_THUNDER = 78;
+	V0079_MOVE_THUNDERBOLT = 79;
+	V0080_MOVE_TWISTER = 80;
+	V0081_MOVE_DRAGON_BREATH = 81;
+	V0082_MOVE_DRAGON_PULSE = 82;
+	V0083_MOVE_DRAGON_CLAW = 83;
+	V0084_MOVE_DISARMING_VOICE = 84;
+	V0085_MOVE_DRAINING_KISS = 85;
+	V0086_MOVE_DAZZLING_GLEAM = 86;
+	V0087_MOVE_MOONBLAST = 87;
+	V0088_MOVE_PLAY_ROUGH = 88;
+	V0089_MOVE_CROSS_POISON = 89;
+	V0090_MOVE_SLUDGE_BOMB = 90;
+	V0091_MOVE_SLUDGE_WAVE = 91;
+	V0092_MOVE_GUNK_SHOT = 92;
+	V0093_MOVE_MUD_SHOT = 93;
+	V0094_MOVE_BONE_CLUB = 94;
+	V0095_MOVE_BULLDOZE = 95;
+	V0096_MOVE_MUD_BOMB = 96;
+	V0097_MOVE_FURY_CUTTER = 97;
+	V0098_MOVE_BUG_BITE = 98;
+	V0099_MOVE_SIGNAL_BEAM = 99;
+	V0100_MOVE_X_SCISSOR = 100;
+	V0101_MOVE_FLAME_CHARGE = 101;
+	V0102_MOVE_FLAME_BURST = 102;
+	V0103_MOVE_FIRE_BLAST = 103;
+	V0104_MOVE_BRINE = 104;
+	V0105_MOVE_WATER_PULSE = 105;
+	V0106_MOVE_SCALD = 106;
+	V0107_MOVE_HYDRO_PUMP = 107;
+	V0108_MOVE_PSYCHIC = 108;
+	V0109_MOVE_PSYSTRIKE = 109;
+	V0110_MOVE_ICE_SHARD = 110;
+	V0111_MOVE_ICY_WIND = 111;
+	V0112_MOVE_FROST_BREATH = 112;
+	V0113_MOVE_ABSORB = 113;
+	V0114_MOVE_GIGA_DRAIN = 114;
+	V0115_MOVE_FIRE_PUNCH = 115;
+	V0116_MOVE_SOLAR_BEAM = 116;
+	V0117_MOVE_LEAF_BLADE = 117;
+	V0118_MOVE_POWER_WHIP = 118;
+	V0119_MOVE_SPLASH = 119;
+	V0120_MOVE_ACID = 120;
+	V0121_MOVE_AIR_CUTTER = 121;
+	V0122_MOVE_HURRICANE = 122;
+	V0123_MOVE_BRICK_BREAK = 123;
+	V0124_MOVE_CUT = 124;
+	V0125_MOVE_SWIFT = 125;
+	V0126_MOVE_HORN_ATTACK = 126;
+	V0127_MOVE_STOMP = 127;
+	V0128_MOVE_HEADBUTT = 128;
+	V0129_MOVE_HYPER_FANG = 129;
+	V0130_MOVE_SLAM = 130;
+	V0131_MOVE_BODY_SLAM = 131;
+	V0132_MOVE_REST = 132;
+	V0133_MOVE_STRUGGLE = 133;
+	V0134_MOVE_SCALD_BLASTOISE = 134;
+	V0135_MOVE_HYDRO_PUMP_BLASTOISE = 135;
+	V0136_MOVE_WRAP_GREEN = 136;
+	V0137_MOVE_WRAP_PINK = 137;
+	V0200_MOVE_FURY_CUTTER_FAST = 200;
+	V0201_MOVE_BUG_BITE_FAST = 201;
+	V0202_MOVE_BITE_FAST = 202;
+	V0203_MOVE_SUCKER_PUNCH_FAST = 203;
+	V0204_MOVE_DRAGON_BREATH_FAST = 204;
+	V0205_MOVE_THUNDER_SHOCK_FAST = 205;
+	V0206_MOVE_SPARK_FAST = 206;
+	V0207_MOVE_LOW_KICK_FAST = 207;
+	V0208_MOVE_KARATE_CHOP_FAST = 208;
+	V0209_MOVE_EMBER_FAST = 209;
+	V0210_MOVE_WING_ATTACK_FAST = 210;
+	V0211_MOVE_PECK_FAST = 211;
+	V0212_MOVE_LICK_FAST = 212;
+	V0213_MOVE_SHADOW_CLAW_FAST = 213;
+	V0214_MOVE_VINE_WHIP_FAST = 214;
+	V0215_MOVE_RAZOR_LEAF_FAST = 215;
+	V0216_MOVE_MUD_SHOT_FAST = 216;
+	V0217_MOVE_ICE_SHARD_FAST = 217;
+	V0218_MOVE_FROST_BREATH_FAST = 218;
+	V0219_MOVE_QUICK_ATTACK_FAST = 219;
+	V0220_MOVE_SCRATCH_FAST = 220;
+	V0221_MOVE_TACKLE_FAST = 221;
+	V0222_MOVE_POUND_FAST = 222;
+	V0223_MOVE_CUT_FAST = 223;
+	V0224_MOVE_POISON_JAB_FAST = 224;
+	V0225_MOVE_ACID_FAST = 225;
+	V0226_MOVE_PSYCHO_CUT_FAST = 226;
+	V0227_MOVE_ROCK_THROW_FAST = 227;
+	V0228_MOVE_METAL_CLAW_FAST = 228;
+	V0229_MOVE_BULLET_PUNCH_FAST = 229;
+	V0230_MOVE_WATER_GUN_FAST = 230;
+	V0231_MOVE_SPLASH_FAST = 231;
+	V0232_MOVE_WATER_GUN_FAST_BLASTOISE = 232;
+	V0233_MOVE_MUD_SLAP_FAST = 233;
+	V0234_MOVE_ZEN_HEADBUTT_FAST = 234;
+	V0235_MOVE_CONFUSION_FAST = 235;
+	V0236_MOVE_POISON_STING_FAST = 236;
+	V0237_MOVE_BUBBLE_FAST = 237;
+	V0238_MOVE_FEINT_ATTACK_FAST = 238;
+	V0239_MOVE_STEEL_WING_FAST = 239;
+	V0240_MOVE_FIRE_FANG_FAST = 240;
+	V0241_MOVE_ROCK_SMASH_FAST = 241;
+}
+enum HoloPokemonId {
+	POKEMON_UNSET = 0;
+	V0001_POKEMON_BULBASAUR = 1;
+	V0002_POKEMON_IVYSAUR = 2;
+	V0003_POKEMON_VENUSAUR = 3;
+	V0004_POKEMON_CHARMANDER = 4;
+	V0005_POKEMON_CHARMELEON = 5;
+	V0006_POKEMON_CHARIZARD = 6;
+	V0007_POKEMON_SQUIRTLE = 7;
+	V0008_POKEMON_WARTORTLE = 8;
+	V0009_POKEMON_BLASTOISE = 9;
+	V0010_POKEMON_CATERPIE = 10;
+	V0011_POKEMON_METAPOD = 11;
+	V0012_POKEMON_BUTTERFREE = 12;
+	V0013_POKEMON_WEEDLE = 13;
+	V0014_POKEMON_KAKUNA = 14;
+	V0015_POKEMON_BEEDRILL = 15;
+	V0016_POKEMON_PIDGEY = 16;
+	V0017_POKEMON_PIDGEOTTO = 17;
+	V0018_POKEMON_PIDGEOT = 18;
+	V0019_POKEMON_RATTATA = 19;
+	V0020_POKEMON_RATICATE = 20;
+	V0021_POKEMON_SPEAROW = 21;
+	V0022_POKEMON_FEAROW = 22;
+	V0023_POKEMON_EKANS = 23;
+	V0024_POKEMON_ARBOK = 24;
+	V0025_POKEMON_PIKACHU = 25;
+	V0026_POKEMON_RAICHU = 26;
+	V0027_POKEMON_SANDSHREW = 27;
+	V0028_POKEMON_SANDSLASH = 28;
+	V0029_POKEMON_NIDORAN = 29;
+	V0030_POKEMON_NIDORINA = 30;
+	V0031_POKEMON_NIDOQUEEN = 31;
+	V0032_POKEMON_NIDORAN = 32;
+	V0033_POKEMON_NIDORINO = 33;
+	V0034_POKEMON_NIDOKING = 34;
+	V0035_POKEMON_CLEFAIRY = 35;
+	V0036_POKEMON_CLEFABLE = 36;
+	V0037_POKEMON_VULPIX = 37;
+	V0038_POKEMON_NINETALES = 38;
+	V0039_POKEMON_JIGGLYPUFF = 39;
+	V0040_POKEMON_WIGGLYTUFF = 40;
+	V0041_POKEMON_ZUBAT = 41;
+	V0042_POKEMON_GOLBAT = 42;
+	V0043_POKEMON_ODDISH = 43;
+	V0044_POKEMON_GLOOM = 44;
+	V0045_POKEMON_VILEPLUME = 45;
+	V0046_POKEMON_PARAS = 46;
+	V0047_POKEMON_PARASECT = 47;
+	V0048_POKEMON_VENONAT = 48;
+	V0049_POKEMON_VENOMOTH = 49;
+	V0050_POKEMON_DIGLETT = 50;
+	V0051_POKEMON_DUGTRIO = 51;
+	V0052_POKEMON_MEOWTH = 52;
+	V0053_POKEMON_PERSIAN = 53;
+	V0054_POKEMON_PSYDUCK = 54;
+	V0055_POKEMON_GOLDUCK = 55;
+	V0056_POKEMON_MANKEY = 56;
+	V0057_POKEMON_PRIMEAPE = 57;
+	V0058_POKEMON_GROWLITHE = 58;
+	V0059_POKEMON_ARCANINE = 59;
+	V0060_POKEMON_POLIWAG = 60;
+	V0061_POKEMON_POLIWHIRL = 61;
+	V0062_POKEMON_POLIWRATH = 62;
+	V0063_POKEMON_ABRA = 63;
+	V0064_POKEMON_KADABRA = 64;
+	V0065_POKEMON_ALAKAZAM = 65;
+	V0066_POKEMON_MACHOP = 66;
+	V0067_POKEMON_MACHOKE = 67;
+	V0068_POKEMON_MACHAMP = 68;
+	V0069_POKEMON_BELLSPROUT = 69;
+	V0070_POKEMON_WEEPINBELL = 70;
+	V0071_POKEMON_VICTREEBEL = 71;
+	V0072_POKEMON_TENTACOOL = 72;
+	V0073_POKEMON_TENTACRUEL = 73;
+	V0074_POKEMON_GEODUDE = 74;
+	V0075_POKEMON_GRAVELER = 75;
+	V0076_POKEMON_GOLEM = 76;
+	V0077_POKEMON_PONYTA = 77;
+	V0078_POKEMON_RAPIDASH = 78;
+	V0079_POKEMON_SLOWPOKE = 79;
+	V0080_POKEMON_SLOWBRO = 80;
+	V0081_POKEMON_MAGNEMITE = 81;
+	V0082_POKEMON_MAGNETON = 82;
+	V0083_POKEMON_FARFETCHD = 83;
+	V0084_POKEMON_DODUO = 84;
+	V0085_POKEMON_DODRIO = 85;
+	V0086_POKEMON_SEEL = 86;
+	V0087_POKEMON_DEWGONG = 87;
+	V0088_POKEMON_GRIMER = 88;
+	V0089_POKEMON_MUK = 89;
+	V0090_POKEMON_SHELLDER = 90;
+	V0091_POKEMON_CLOYSTER = 91;
+	V0092_POKEMON_GASTLY = 92;
+	V0093_POKEMON_HAUNTER = 93;
+	V0094_POKEMON_GENGAR = 94;
+	V0095_POKEMON_ONIX = 95;
+	V0096_POKEMON_DROWZEE = 96;
+	V0097_POKEMON_HYPNO = 97;
+	V0098_POKEMON_KRABBY = 98;
+	V0099_POKEMON_KINGLER = 99;
+	V0100_POKEMON_VOLTORB = 100;
+	V0101_POKEMON_ELECTRODE = 101;
+	V0102_POKEMON_EXEGGCUTE = 102;
+	V0103_POKEMON_EXEGGUTOR = 103;
+	V0104_POKEMON_CUBONE = 104;
+	V0105_POKEMON_MAROWAK = 105;
+	V0106_POKEMON_HITMONLEE = 106;
+	V0107_POKEMON_HITMONCHAN = 107;
+	V0108_POKEMON_LICKITUNG = 108;
+	V0109_POKEMON_KOFFING = 109;
+	V0110_POKEMON_WEEZING = 110;
+	V0111_POKEMON_RHYHORN = 111;
+	V0112_POKEMON_RHYDON = 112;
+	V0113_POKEMON_CHANSEY = 113;
+	V0114_POKEMON_TANGELA = 114;
+	V0115_POKEMON_KANGASKHAN = 115;
+	V0116_POKEMON_HORSEA = 116;
+	V0117_POKEMON_SEADRA = 117;
+	V0118_POKEMON_GOLDEEN = 118;
+	V0119_POKEMON_SEAKING = 119;
+	V0120_POKEMON_STARYU = 120;
+	V0121_POKEMON_STARMIE = 121;
+	V0122_POKEMON_MR_MIME = 122;
+	V0123_POKEMON_SCYTHER = 123;
+	V0124_POKEMON_JYNX = 124;
+	V0125_POKEMON_ELECTABUZZ = 125;
+	V0126_POKEMON_MAGMAR = 126;
+	V0127_POKEMON_PINSIR = 127;
+	V0128_POKEMON_TAUROS = 128;
+	V0129_POKEMON_MAGIKARP = 129;
+	V0130_POKEMON_GYARADOS = 130;
+	V0131_POKEMON_LAPRAS = 131;
+	V0132_POKEMON_DITTO = 132;
+	V0133_POKEMON_EEVEE = 133;
+	V0134_POKEMON_VAPOREON = 134;
+	V0135_POKEMON_JOLTEON = 135;
+	V0136_POKEMON_FLAREON = 136;
+	V0137_POKEMON_PORYGON = 137;
+	V0138_POKEMON_OMANYTE = 138;
+	V0139_POKEMON_OMASTAR = 139;
+	V0140_POKEMON_KABUTO = 140;
+	V0141_POKEMON_KABUTOPS = 141;
+	V0142_POKEMON_AERODACTYL = 142;
+	V0143_POKEMON_SNORLAX = 143;
+	V0144_POKEMON_ARTICUNO = 144;
+	V0145_POKEMON_ZAPDOS = 145;
+	V0146_POKEMON_MOLTRES = 146;
+	V0147_POKEMON_DRATINI = 147;
+	V0148_POKEMON_DRAGONAIR = 148;
+	V0149_POKEMON_DRAGONITE = 149;
+	V0150_POKEMON_MEWTWO = 150;
+	V0151_POKEMON_MEW = 151;
+}
+
+enum Platform {
+	PLATFORM_UNSET = 0;
+	PLATFORM_IOS = 1;
+	PLATFORM_ANDROID = 2;
+	PLATFORM_OSX = 3;
+	PLATFORM_WINDOWS = 4;
+}
+enum TutorialCompletion {
+	LEGAL_SCREEN = 0;
+	AVATAR_SELECTION = 1;
+	ACCOUNT_CREATION = 2;
+	POKEMON_CAPTURE = 3;
+	NAME_SELECTION = 4;
+	POKEMON_BERRY = 5;
+	USE_ITEM = 6;
+	FIRST_TIME_EXPERIENCE_COMPLETE = 7;
+	POKESTOP_TUTORIAL = 8;
+	GYM_TUTORIAL = 9;
+}
+

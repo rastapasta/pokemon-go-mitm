@@ -1,0 +1,1270 @@
+syntax = "proto3";
+
+package Holoholo.Rpc;
+
+enum Custom_TeamColor {
+  NEUTRAL = 0;
+  BLUE = 1;
+  RED = 2;
+  YELLOW = 3;
+}
+
+enum Custom_PokemonName {
+  MISSINGNO = 0; // just kidding
+  BULBASAUR = 1;
+  IVYSAUR = 2;
+  VENUSAUR = 3;
+  CHARMENDER = 4;
+  CHARMELEON = 5;
+  CHARIZARD = 6;
+  SQUIRTLE = 7;
+  WARTORTLE = 8;
+  BLASTOISE = 9;
+  CATERPIE = 10;
+  METAPOD = 11;
+  BUTTERFREE = 12;
+  WEEDLE = 13;
+  KAKUNA = 14;
+  BEEDRILL = 15;
+  PIDGEY = 16;
+  PIDGEOTTO = 17;
+  PIDGEOT = 18;
+  RATTATA = 19;
+  RATICATE = 20;
+  SPEAROW = 21;
+  FEAROW = 22;
+  EKANS = 23;
+  ARBOK = 24;
+  PIKACHU = 25;
+  RAICHU = 26;
+  SANDSHREW = 27;
+  SANDLASH = 28;
+  NIDORAN_FEMALE = 29;
+  NIDORINA = 30;
+  NIDOQUEEN = 31;
+  NIDORAN_MALE = 32;
+  NIDORINO = 33;
+  NIDOKING = 34;
+  CLEFARY = 35;
+  CLEFABLE = 36;
+  VULPIX = 37;
+  NINETALES = 38;
+  JIGGLYPUFF = 39;
+  WIGGLYTUFF = 40;
+  ZUBAT = 41;
+  GOLBAT = 42;
+  ODDISH = 43;
+  GLOOM = 44;
+  VILEPLUME = 45;
+  PARAS = 46;
+  PARASECT = 47;
+  VENONAT = 48;
+  VENOMOTH = 49;
+  DIGLETT = 50;
+  DUGTRIO = 51;
+  MEOWTH = 52;
+  PERSIAN = 53;
+  PSYDUCK = 54;
+  GOLDUCK = 55;
+  MANKEY = 56;
+  PRIMEAPE = 57;
+  GROWLITHE = 58;
+  ARCANINE = 59;
+  POLIWAG = 60;
+  POLIWHIRL = 61;
+  POLIWRATH = 62;
+  ABRA = 63;
+  KADABRA = 64;
+  ALAKHAZAM = 65;
+  MACHOP = 66;
+  MACHOKE = 67;
+  MACHAMP = 68;
+  BELLSPROUT = 69;
+  WEEPINBELL = 70;
+  VICTREEBELL = 71;
+  TENTACOOL = 72;
+  TENTACRUEL = 73;
+  GEODUGE = 74;
+  GRAVELER = 75;
+  GOLEM = 76;
+  PONYTA = 77;
+  RAPIDASH = 78;
+  SLOWPOKE = 79;
+  SLOWBRO = 80;
+  MAGNEMITE = 81;
+  MAGNETON = 82;
+  FARFETCHD = 83;
+  DODUO = 84;
+  DODRIO = 85;
+  SEEL = 86;
+  DEWGONG = 87;
+  GRIMER = 88;
+  MUK = 89;
+  SHELLDER = 90;
+  CLOYSTER = 91;
+  GASTLY = 92;
+  HAUNTER = 93;
+  GENGAR = 94;
+  ONIX = 95;
+  DROWZEE = 96;
+  HYPNO = 97;
+  KRABBY = 98;
+  KINGLER = 99;
+  VOLTORB = 100;
+  ELECTRODE = 101;
+  EXEGGCUTE = 102;
+  EXEGGUTOR = 103;
+  CUBONE = 104;
+  MAROWAK = 105;
+  HITMONLEE = 106;
+  HITMONCHAN = 107;
+  LICKITUNG = 108;
+  KOFFING = 109;
+  WEEZING = 110;
+  RHYHORN = 111;
+  RHYDON = 112;
+  CHANSEY = 113;
+  TANGELA = 114;
+  KANGASKHAN = 115;
+  HORSEA = 116;
+  SEADRA = 117;
+  GOLDEEN = 118;
+  SEAKING = 119;
+  STARYU = 120;
+  STARMIE = 121;
+  MR_MIME = 122;
+  SCYTHER = 123;
+  JYNX = 124;
+  ELECTABUZZ = 125;
+  MAGMAR = 126;
+  PINSIR = 127;
+  TAUROS = 128;
+  MAGIKARP = 129;
+  GYARADOS = 130;
+  LAPRAS = 131;
+  DITTO = 132;
+  EEVEE = 133;
+  VAPOREON = 134;
+  JOLTEON = 135;
+  FLAREON = 136;
+  PORYGON = 137;
+  OMANYTE = 138;
+  OMASTAR = 139;
+  KABUTO = 140;
+  KABUTOPS = 141;
+  AERODACTYL = 142;
+  SNORLAX = 143;
+  ARTICUNO = 144;
+  ZAPDOS = 145;
+  MOLTRES = 146;
+  DRATINI = 147;
+  DRAGONAIR = 148;
+  DRAGONITE = 149;
+  MEWTWO = 150;
+  MEW = 151;
+}
+
+enum Method {
+  METHOD_UNSET = 0;
+  PLAYER_UPDATE = 1;
+  GET_PLAYER = 2;
+  GET_INVENTORY = 4;
+  DOWNLOAD_SETTINGS = 5;
+  DOWNLOAD_ITEM_TEMPLATES = 6;
+  DOWNLOAD_REMOTE_CONFIG_VERSION = 7;
+  FORT_SEARCH = 101;
+  ENCOUNTER = 102;
+  CATCH_POKEMON = 103;
+  FORT_DETAILS = 104;
+  ITEM_USE = 105;
+  GET_MAP_OBJECTS = 106;
+  FORT_DEPLOY_POKEMON = 110;
+  FORT_RECALL_POKEMON = 111;
+  RELEASE_POKEMON = 112;
+  USE_ITEM_POTION = 113;
+  USE_ITEM_CAPTURE = 114;
+  USE_ITEM_FLEE = 115;
+  USE_ITEM_REVIVE = 116;
+  TRADE_SEARCH = 117;
+  TRADE_OFFER = 118;
+  TRADE_RESPONSE = 119;
+  TRADE_RESULT = 120;
+  GET_PLAYER_PROFILE = 121;
+  GET_ITEM_PACK = 122;
+  BUY_ITEM_PACK = 123;
+  BUY_GEM_PACK = 124;
+  EVOLVE_POKEMON = 125;
+  GET_HATCHED_EGGS = 126;
+  ENCOUNTER_TUTORIAL_COMPLETE = 127;
+  LEVEL_UP_REWARDS = 128;
+  CHECK_AWARDED_BADGES = 129;
+  USE_ITEM_GYM = 133;
+  GET_GYM_DETAILS = 134;
+  START_GYM_BATTLE = 135;
+  ATTACK_GYM = 136;
+  RECYCLE_INVENTORY_ITEM = 137;
+  COLLECT_DAILY_BONUS = 138;
+  USE_ITEM_XP_BOOST = 139;
+  USE_ITEM_EGG_INCUBATOR = 140;
+  USE_INCENSE = 141;
+  GET_INCENSE_POKEMON = 142;
+  INCENSE_ENCOUNTER = 143;
+  ADD_FORT_MODIFIER = 144;
+  DISK_ENCOUNTER = 145;
+  COLLECT_DAILY_DEFENDER_BONUS = 146;
+  UPGRADE_POKEMON = 147;
+  SET_FAVORITE_POKEMON = 148;
+  NICKNAME_POKEMON = 149;
+  EQUIP_BADGE = 150;
+  SET_CONTACT_SETTINGS = 151;
+  GET_ASSET_DIGEST = 300;
+  GET_DOWNLOAD_URLS = 301;
+  GET_SUGGESTED_CODENAMES = 401;
+  CHECK_CODENAME_AVAILABLE = 402;
+  CLAIM_CODENAME = 403;
+  SET_AVATAR = 404;
+  SET_PLAYER_TEAM = 405;
+  MARK_TUTORIAL_COMPLETE = 406;
+  LOAD_SPAWN_POINTS = 500;
+  ECHO = 666;
+  DEBUG_UPDATE_INVENTORY = 700;
+  DEBUG_DELETE_PLAYER = 701;
+  SFIDA_REGISTRATION = 800;
+  SFIDA_ACTION_LOG = 801;
+  SFIDA_CERTIFICATION = 802;
+  SFIDA_UPDATE = 803;
+  SFIDA_ACTION = 804;
+  SFIDA_DOWSER = 805;
+  SFIDA_CAPTURE = 806;
+}
+enum FortType {
+  GYM = 0;
+  CHECKPOINT = 1; //Pokestop
+}
+enum Item {
+  ITEM_UNKNOWN = 0;
+  ITEM_POKE_BALL = 1;
+  ITEM_GREAT_BALL = 2;
+  ITEM_ULTRA_BALL = 3;
+  ITEM_MASTER_BALL = 4;
+  ITEM_POTION = 101;
+  ITEM_SUPER_POTION = 102;
+  ITEM_HYPER_POTION = 103;
+  ITEM_MAX_POTION = 104;
+  ITEM_REVIVE = 201;
+  ITEM_MAX_REVIVE = 202;
+  ITEM_LUCKY_EGG = 301;
+  ITEM_INCENSE_ORDINARY = 401;
+  ITEM_INCENSE_SPICY = 402;
+  ITEM_INCENSE_COOL = 403;
+  ITEM_INCENSE_FLORAL = 404;
+  ITEM_TROY_DISK = 501;
+  ITEM_X_ATTACK = 602;
+  ITEM_X_DEFENSE = 603;
+  ITEM_X_MIRACLE = 604;
+  ITEM_RAZZ_BERRY = 701;
+  ITEM_BLUK_BERRY = 702;
+  ITEM_NANAB_BERRY = 703;
+  ITEM_WEPAR_BERRY = 704;
+  ITEM_PINAP_BERRY = 705;
+  ITEM_SPECIAL_CAMERA = 801;
+  ITEM_INCUBATOR_BASIC_UNLIMITED = 901;
+  ITEM_INCUBATOR_BASIC = 902;
+  ITEM_POKEMON_STORAGE_UPGRADE = 1001;
+  ITEM_ITEM_STORAGE_UPGRADE = 1002;
+}
+message Types {
+  message FortSearchOutProto {
+    enum Result {
+      NO_RESULT_SET = 0;
+      SUCCESS = 1;
+      OUT_OF_RANGE = 2;
+      IN_COOLDOWN_PERIOD = 3;
+      INVENTORY_FULL = 4;
+    }
+  }
+  message StartGymBattleOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_GYM_NOT_FOUND = 2;
+      ERROR_GYM_NEUTRAL = 3;
+      ERROR_GYM_WRONG_TEAM = 4;
+      ERROR_GYM_EMPTY = 5;
+      ERROR_INVALID_DEFENDER = 6;
+      ERROR_TRAINING_INVALID_ATTACKER_COUNT = 7;
+      ERROR_ALL_POKEMON_FAINTED = 8;
+      ERROR_TOO_MANY_BATTLES = 9;
+      ERROR_TOO_MANY_PLAYERS = 10;
+      ERROR_GYM_BATTLE_LOCKOUT = 11;
+      ERROR_PLAYER_BELOW_MINIMUM_LEVEL = 12;
+      ERROR_NOT_IN_RANGE = 13;
+    }
+  }
+  message AttackGymOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_INVALID_ATTACK_ACTIONS = 2;
+      ERROR_NOT_IN_RANGE = 3;
+    }
+  }
+  message BattleActionProto {
+    enum ActionType {
+      UNSET = 0;
+      ATTACK = 1;
+      DODGE = 2;
+      SPECIAL_ATTACK = 3;
+      SWAP_POKEMON = 4;
+      FAINT = 5;
+      PLAYER_JOIN = 6;
+      PLAYER_QUIT = 7;
+      VICTORY = 8;
+      DEFEAT = 9;
+      TIMED_OUT = 10;
+    }
+  }
+  message BattleLogProto {
+    enum BattleType {
+      BATTLE_TYPE_UNSET = 0;
+      NORMAL = 1;
+      TRAINING = 2;
+    }
+    enum State {
+      STATE_UNSET = 0;
+      ACTIVE = 1;
+      VICTORY = 2;
+      DEFEATED = 3;
+      TIMED_OUT = 4;
+    }
+  }
+  message NicknamePokemonOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_INVALID_NICKNAME = 2;
+      ERROR_POKEMON_NOT_FOUND = 3;
+      ERROR_POKEMON_IS_EGG = 4;
+    }
+  }
+
+  message CollectDailyBonusOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      FAILURE = 2;
+      TOO_SOON = 3;
+    }
+  }
+  message CollectDailyDefenderBonusOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      FAILURE = 2;
+      TOO_SOON = 3;
+      NO_DEFENDERS = 4;
+    }
+  }
+  message EncounterOutProto {
+    enum Status {
+      ENCOUNTER_ERROR = 0;
+      ENCOUNTER_SUCCESS = 1;
+      ENCOUNTER_NOT_FOUND = 2;
+      ENCOUNTER_CLOSED = 3;
+      ENCOUNTER_POKEMON_FLED = 4;
+      ENCOUNTER_NOT_IN_RANGE = 5;
+      ENCOUNTER_ALREADY_HAPPENED = 6;
+      POKEMON_INVENTORY_FULL = 7;
+    }
+    enum Background {
+      PARK = 0;
+      DESERT = 1;
+    }
+  }
+  message CatchPokemonOutProto {
+    enum Status {
+      CATCH_ERROR = 0;
+      CATCH_SUCCESS = 1;
+      CATCH_ESCAPE = 2;
+      CATCH_FLEE = 3;
+      CATCH_MISSED = 4;
+    }
+  }
+  message EncounterTutorialCompleteOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_INVALID_POKEMON = 2;
+    }
+  }
+  message UseIncenseActionOutProto {
+    enum Result {
+      UNKNOWN = 0;
+      SUCCESS = 1;
+      INCENSE_ALREADY_ACTIVE = 2;
+      NONE_IN_INVENTORY = 3;
+      LOCATION_UNSET = 4;
+    }
+  }
+  message GetIncensePokemonOutProto {
+    enum Result {
+      INCENSE_ENCOUNTER_UNKNOWN = 0;
+      INCENSE_ENCOUNTER_AVAILABLE = 1;
+      INCENSE_ENCOUNTER_NOT_AVAILABLE = 2;
+    }
+  }
+  message IncenseEncounterOutProto {
+    enum Result {
+      INCENSE_ENCOUNTER_UNKNOWN = 0;
+      INCENSE_ENCOUNTER_SUCCESS = 1;
+      INCENSE_ENCOUNTER_NOT_AVAILABLE = 2;
+      POKEMON_INVENTORY_FULL = 3;
+    }
+  }
+  message DiskEncounterOutProto {
+    enum Result {
+      UNKNOWN = 0;
+      SUCCESS = 1;
+      NOT_AVAILABLE = 2;
+      NOT_IN_RANGE = 3;
+      ENCOUNTER_ALREADY_FINISHED = 4;
+      POKEMON_INVENTORY_FULL = 5;
+    }
+  }
+  message EvolvePokemonOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      FAILED_POKEMON_MISSING = 2;
+      FAILED_INSUFFICIENT_RESOURCES = 3;
+      FAILED_POKEMON_CANNOT_EVOLVE = 4;
+      FAILED_POKEMON_IS_DEPLOYED = 5;
+    }
+  }
+  message FortDeployOutProto {
+    enum Result {
+      NO_RESULT_SET = 0;
+      SUCCESS = 1;
+      ERROR_ALREADY_HAS_POKEMON_ON_FORT = 2;
+      ERROR_OPPOSING_TEAM_OWNS_FORT = 3;
+      ERROR_FORT_IS_FULL = 4;
+      ERROR_NOT_IN_RANGE = 5;
+      ERROR_PLAYER_HAS_NO_TEAM = 6;
+      ERROR_POKEMON_NOT_FULL_HP = 7;
+      ERROR_PLAYER_BELOW_MINIMUM_LEVEL = 8;
+    }
+  }
+  message FortRecallOutProto {
+    enum Result {
+      NO_RESULT_SET = 0;
+      SUCCESS = 1;
+      ERROR_NOT_IN_RANGE = 2;
+      ERROR_POKEMON_NOT_ON_FORT = 3;
+      ERROR_NO_PLAYER = 4;
+    }
+  }
+  message AddFortModifierOutProto {
+    enum Result {
+      NO_RESULT_SET = 0;
+      SUCCESS = 1;
+      FORT_ALREADY_HAS_MODIFIER = 2;
+      TOO_FAR_AWAY = 3;
+      NO_ITEM_IN_INVENTORY = 4;
+    }
+  }
+  message GetGameMasterClientTemplatesOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message GetRemoteConfigVersionsOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message GetMapObjectsOutProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      LOCATION_UNSET = 2;
+    }
+  }
+  message GetGymDetailsOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_NOT_IN_RANGE = 2;
+    }
+  }
+  message CatchPokemonLogEntry {
+    enum Result {
+      UNSET = 0;
+      POKEMON_CAPTURED = 1;
+      POKEMON_FLED = 2;
+    }
+  }
+  message FortSearchLogEntry {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message PlayerProfileOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message LevelUpRewardsOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      AWARDED_ALREADY = 2;
+    }
+  }
+  message SetFavoritePokemonOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_POKEMON_NOT_FOUND = 2;
+      ERROR_POKEMON_IS_EGG = 3;
+    }
+  }
+  message ReleasePokemonOutProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      POKEMON_DEPLOYED = 2;
+      FAILED = 3;
+      ERROR_POKEMON_IS_EGG = 4;
+    }
+  }
+
+  message CodenameResultProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      CODENAME_NOT_AVAILABLE = 2;
+      CODENAME_NOT_VALID = 3;
+      CURRENT_OWNER = 4;
+      CODENAME_CHANGE_NOT_ALLOWED = 5;
+    }
+  }
+  message SetAvatarOutProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      AVATAR_ALREADY_SET = 2;
+      FAILURE = 3;
+    }
+  }
+  message SetContactSettingsOutProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      FAILURE = 2;
+    }
+  }
+  message SetPlayerTeamOutProto {
+    enum Status {
+      UNSET = 0;
+      SUCCESS = 1;
+      TEAM_ALREADY_SET = 2;
+      FAILURE = 3;
+    }
+  }
+  message RecycleItemOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_NOT_ENOUGH_COPIES = 2;
+      ERROR_CANNOT_RECYCLE_INCUBATORS = 3;
+    }
+  }
+  message EquipBadgeOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      COOLDOWN_ACTIVE = 2;
+      NOT_QUALIFIED = 3;
+    }
+  }
+  message GetActionLogResponse {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message TradingSearchOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+    }
+  }
+  message TradingOfferOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      CONNECTION_LOST = 2;
+    }
+  }
+  message PollForTradeResponseOutProto {
+    enum Result {
+      UNSET = 0;
+      ACCEPT_OFFER = 1;
+      TRADE_CANCELED = 2;
+    }
+  }
+  message TradingResultOutProto {
+    enum Result {
+      UNSET = 0;
+      TRADE_COMPLETE = 1;
+      TRADE_CANCELLED_OFFER = 2;
+    }
+  }
+  message UpgradePokemonOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_POKEMON_NOT_FOUND = 2;
+      ERROR_INSUFFICIENT_RESOURCES = 3;
+      ERROR_UPGRADE_NOT_AVAILABLE = 4;
+      ERROR_POKEMON_IS_DEPLOYED = 5;
+    }
+  }
+  message UseItemPotionOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_NO_POKEMON = 2;
+      ERROR_CANNOT_USE = 3;
+      ERROR_DEPLOYED_TO_FORT = 4;
+    }
+  }
+  message UseItemReviveOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_NO_POKEMON = 2;
+      ERROR_CANNOT_USE = 3;
+      ERROR_DEPLOYED_TO_FORT = 4;
+    }
+  }
+  message UseItemGymOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_CANNOT_USE = 2;
+      ERROR_NOT_IN_RANGE = 3;
+    }
+  }
+  message UseItemXpBoostOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_INVALID_ITEM_TYPE = 2;
+      ERROR_XP_BOOST_ALREADY_ACTIVE = 3;
+      ERROR_NO_ITEMS_REMAINING = 4;
+      ERROR_LOCATION_UNSET = 5;
+    }
+  }
+  message UseItemEggIncubatorOutProto {
+    enum Result {
+      UNSET = 0;
+      SUCCESS = 1;
+      ERROR_INCUBATOR_NOT_FOUND = 2;
+      ERROR_POKEMON_EGG_NOT_FOUND = 3;
+      ERROR_POKEMON_ID_NOT_EGG = 4;
+      ERROR_INCUBATOR_ALREADY_IN_USE = 5;
+      ERROR_POKEMON_ALREADY_INCUBATING = 6;
+      ERROR_INCUBATOR_NO_USES_REMAINING = 7;
+    }
+  }
+}
+
+message PokemonProto {
+	int32 Id = 1;
+	int32 PokemonId = 2;
+	int32 Cp = 3;
+	int32 Stamina = 4;
+	int32 MaxStamina = 5;
+	int32 Move1 = 6;
+	int32 Move2 = 7;
+	int32 DeployedFortId = 8;
+	string OwnerName = 9;
+	int32 IsEgg = 10;
+	int32 EggKmWalkedTarget = 11;
+	int32 EggKmWalkedStart = 12;
+	int32 Origin = 14;
+	float HeightM = 15;
+	float WeightKg = 16;
+	int32 IndividualAttack = 17;
+	int32 IndividualDefense = 18;
+	int32 IndividualStamina = 19;
+	int32 CpMultiplier = 20;
+	int32 Pokeball = 21;
+	uint64 CapturedS2CellId = 22;
+	int32 BattlesAttacked = 23;
+	int32 BattlesDefended = 24;
+	int32 EggIncubatorId = 25;
+	uint64 CreationTimeMs = 26;
+	int32 NumUpgrades = 27;
+	int32 AdditionalCpMultiplier = 28;
+	int32 Favorite = 29;
+	string Nickname = 30;
+	int32 FromFort = 31;
+}
+
+message ItemProto {
+  Holoholo.Rpc.Item Item = 1;
+  int32 Count = 2;
+  bool Unseen = 3;
+}
+
+// A "fort" is the internal name for a gym or pokestop point of interest
+message PokemonFortProto {
+  enum FortSponsor {
+    UNSET_SPONSOR = 0; // was originally "UNSET" in the app itself
+    MCDONALDS = 1;
+    POKEMON_STORE = 2;
+  }
+
+  enum FortRenderingType {
+    DEFAULT = 0;
+    INTERNAL_TEST = 1;
+  }
+
+
+  string FortId = 1;
+  int64 LastModifiedMs = 2;
+  double Latitude = 3;
+  double Longitude = 4;
+  bool Enabled = 8;
+
+  // Fields related to gyms only
+
+  // Team that owns the gym
+  Custom_TeamColor Team = 5;
+
+  // Highest CP Pokemon at the gym
+  Custom_PokemonName GuardPokemonId = 6;
+  int32 GuardPokemonLevel = 7;
+
+  // Prestigate / experience of the gym
+  int64 GymPoints = 10;
+
+  // Whether someone is battling at the gym currently
+  bool IsInBattle = 11;
+
+  // Fields related to pokestops only
+
+  // If 1, this is a pokestop
+  Holoholo.Rpc.FortType FortType = 9;
+
+  // Timestamp when the pokestop can be activated again to get items / xp
+  int64 CooldownCompleteMs = 14;
+
+  FortSponsor Sponsor = 15;
+  FortRenderingType RenderingType = 16;
+
+  // Might represent the type of item applied to the pokestop, right only lures can be applied
+  bytes ActiveFortModifier = 12;
+
+  message Custom_FortLureInfoProto {
+    string FortId = 1;
+    double NotSure2 = 2;
+    Custom_PokemonName ActivePokemon = 3;
+    int64 LureExpiryMs = 4;
+  }
+  Custom_FortLureInfoProto FortLureInfo = 13;
+}
+
+message PlayerPublicProfileProto {
+  string Name = 1;
+  int32 Level = 2;
+  PlayerAvatarProto Avatar = 3;
+}
+
+message PlayerAvatarProto {
+  int32 Avatar = 8;
+  int32 Skin = 2;
+  int32 Hair = 3;
+  int32 Shirt = 4;
+  int32 Pants = 5;
+  int32 Hat = 6;
+  int32 Shoes = 7;
+  int32 Eyes = 9;
+  int32 Backpack = 10;
+}
+
+message GymStateProto {
+  PokemonFortProto FortMapData = 1;
+  repeated GymMembershipProto GymMembership = 2;
+}
+
+message GymMembershipProto {
+  PokemonProto Pokemon = 1;
+  PlayerPublicProfileProto TrainerPublicProfile = 2;
+}
+
+message AppliedItemProto {
+  Rpc.Item Item = 1;
+  HoloItemType ItemType = 2;
+  int64 ExpirationMs = 3;
+  int64 AppliedMs = 4;
+}
+
+enum HoloPokemonFamilyId {
+	FAMILY_UNSET = 0;
+	V0001_FAMILY_BULBASAUR = 1;
+	V0004_FAMILY_CHARMANDER = 4;
+	V0007_FAMILY_SQUIRTLE = 7;
+	V0010_FAMILY_CATERPIE = 10;
+	V0013_FAMILY_WEEDLE = 13;
+	V0016_FAMILY_PIDGEY = 16;
+	V0019_FAMILY_RATTATA = 19;
+	V0021_FAMILY_SPEAROW = 21;
+	V0023_FAMILY_EKANS = 23;
+	V0025_FAMILY_PIKACHU = 25;
+	V0027_FAMILY_SANDSHREW = 27;
+	V0029_FAMILY_NIDORAN = 29;
+	V0032_FAMILY_NIDORAN = 32;
+	V0035_FAMILY_CLEFAIRY = 35;
+	V0037_FAMILY_VULPIX = 37;
+	V0039_FAMILY_JIGGLYPUFF = 39;
+	V0041_FAMILY_ZUBAT = 41;
+	V0043_FAMILY_ODDISH = 43;
+	V0046_FAMILY_PARAS = 46;
+	V0048_FAMILY_VENONAT = 48;
+	V0050_FAMILY_DIGLETT = 50;
+	V0052_FAMILY_MEOWTH = 52;
+	V0054_FAMILY_PSYDUCK = 54;
+	V0056_FAMILY_MANKEY = 56;
+	V0058_FAMILY_GROWLITHE = 58;
+	V0060_FAMILY_POLIWAG = 60;
+	V0063_FAMILY_ABRA = 63;
+	V0066_FAMILY_MACHOP = 66;
+	V0069_FAMILY_BELLSPROUT = 69;
+	V0072_FAMILY_TENTACOOL = 72;
+	V0074_FAMILY_GEODUDE = 74;
+	V0077_FAMILY_PONYTA = 77;
+	V0079_FAMILY_SLOWPOKE = 79;
+	V0081_FAMILY_MAGNEMITE = 81;
+	V0083_FAMILY_FARFETCHD = 83;
+	V0084_FAMILY_DODUO = 84;
+	V0086_FAMILY_SEEL = 86;
+	V0088_FAMILY_GRIMER = 88;
+	V0090_FAMILY_SHELLDER = 90;
+	V0092_FAMILY_GASTLY = 92;
+	V0095_FAMILY_ONIX = 95;
+	V0096_FAMILY_DROWZEE = 96;
+	V0098_FAMILY_KRABBY = 98;
+	V0100_FAMILY_VOLTORB = 100;
+	V0102_FAMILY_EXEGGCUTE = 102;
+	V0104_FAMILY_CUBONE = 104;
+	V0106_FAMILY_HITMONLEE = 106;
+	V0107_FAMILY_HITMONCHAN = 107;
+	V0108_FAMILY_LICKITUNG = 108;
+	V0109_FAMILY_KOFFING = 109;
+	V0111_FAMILY_RHYHORN = 111;
+	V0113_FAMILY_CHANSEY = 113;
+	V0114_FAMILY_TANGELA = 114;
+	V0115_FAMILY_KANGASKHAN = 115;
+	V0116_FAMILY_HORSEA = 116;
+	V0118_FAMILY_GOLDEEN = 118;
+	V0120_FAMILY_STARYU = 120;
+	V0122_FAMILY_MR_MIME = 122;
+	V0123_FAMILY_SCYTHER = 123;
+	V0124_FAMILY_JYNX = 124;
+	V0125_FAMILY_ELECTABUZZ = 125;
+	V0126_FAMILY_MAGMAR = 126;
+	V0127_FAMILY_PINSIR = 127;
+	V0128_FAMILY_TAUROS = 128;
+	V0129_FAMILY_MAGIKARP = 129;
+	V0131_FAMILY_LAPRAS = 131;
+	V0132_FAMILY_DITTO = 132;
+	V0133_FAMILY_EEVEE = 133;
+	V0137_FAMILY_PORYGON = 137;
+	V0138_FAMILY_OMANYTE = 138;
+	V0140_FAMILY_KABUTO = 140;
+	V0142_FAMILY_AERODACTYL = 142;
+	V0143_FAMILY_SNORLAX = 143;
+	V0144_FAMILY_ARTICUNO = 144;
+	V0145_FAMILY_ZAPDOS = 145;
+	V0146_FAMILY_MOLTRES = 146;
+	V0147_FAMILY_DRATINI = 147;
+	V0150_FAMILY_MEWTWO = 150;
+	V0151_FAMILY_MEW = 151;
+}
+
+enum HoloItemType {
+	ITEM_TYPE_NONE = 0;
+	ITEM_TYPE_POKEBALL = 1;
+	ITEM_TYPE_POTION = 2;
+	ITEM_TYPE_REVIVE = 3;
+	ITEM_TYPE_MAP = 4;
+	ITEM_TYPE_BATTLE = 5;
+	ITEM_TYPE_FOOD = 6;
+	ITEM_TYPE_CAMERA = 7;
+	ITEM_TYPE_DISK = 8;
+	ITEM_TYPE_INCUBATOR = 9;
+	ITEM_TYPE_INCENSE = 10;
+	ITEM_TYPE_XP_BOOST = 11;
+	ITEM_TYPE_INVENTORY_UPGRADE = 12;
+}
+
+message WildPokemonProto {
+  fixed64 EncounterId = 1;
+  int64 LastModifiedMs = 2;
+  double Latitude = 3;
+  double Longitude = 4;
+
+  // S2 geographic area of the spawn point (http://s2map.com/) (https://code.google.com/archive/p/s2-geometry-library/)
+  string SpawnPointId = 5;
+
+  PokemonProto Pokemon = 7;
+
+  // The amount of time before the pokemon will be gone
+  int32 TimeTillHiddenMs = 11;
+}
+
+message FortDetailsOutProto {
+  string Id = 1;
+  Custom_TeamColor Team = 2;
+  PokemonProto Pokemon = 3;
+  string Name = 4;
+  repeated string ImageUrl = 5;
+  int32 Fp = 6;
+  int32 Stamina = 7;
+  int32 MaxStamina = 8;
+  Holoholo.Rpc.FortType FortType = 9;
+  double Latitude = 10;
+  double Longitude = 11;
+  string Description = 12;
+  repeated ClientFortModifierProto Modifier = 13;
+}
+
+message ClientFortModifierProto {
+  Holoholo.Rpc.Item ModifierType = 1;
+  int64 ExpirationTimeMs = 2;
+  string DeployingPlayerCodename = 3;
+}
+
+message FortDetailsProto {
+  string Id = 1;
+  double Latitude = 2;
+  double Longitude = 3;
+}
+
+message FortSearchProto {
+  string Id = 1;
+  double PlayerLatDegrees = 2;
+  double PlayerLngDegrees = 3;
+  double FortLatDegrees = 4;
+  double FortLngDegrees = 5;
+}
+
+message AwardItemProto {
+  Holoholo.Rpc.Item Item = 1;
+  int32 ItemCount = 2;
+}
+
+message FortSearchOutProto {
+  Holoholo.Rpc.Types.FortSearchOutProto.Result Result = 1;
+  repeated AwardItemProto Items = 2;
+  int32 GemsAwarded = 3;
+  PokemonProto EggPokemon = 4;
+  int32 XpAwarded = 5;
+  int64 CooldownComplete = 6;
+  int32 ChainHackSequenceNumber = 7;
+}
+
+message GetGymDetailsProto {
+  string GymId = 1;
+  double PlayerLatDegrees = 2;
+  double PlayerLngDegrees = 3;
+  double GymLatDegrees = 4;
+  double GymLngDegrees = 5;
+}
+
+message GetGymDetailsOutProto {
+  enum ResultEnum {
+    UNSET = 0;
+    SUCCESS = 1;
+    ERROR_NOT_IN_RANGE = 2;
+  }
+
+  GymStateProto GymState = 1;
+  string Name = 2;
+  repeated string Url = 3;
+  ResultEnum Result = 4;
+  string Description = 5;
+}
+
+enum HoloIapItemCategory {
+	IAP_CATEGORY_NONE = 0;
+	IAP_CATEGORY_BUNDLE = 1;
+	IAP_CATEGORY_ITEMS = 2;
+	IAP_CATEGORY_UPGRADES = 3;
+	IAP_CATEGORY_POKECOINS = 4;
+}
+
+message IapItemDisplayProto {
+  string Sku = 1;
+  HoloIapItemCategory Category = 2;
+  int32 SortOrder = 3;
+  repeated Rpc.Item Items = 4;
+  repeated int32 Counts = 5;
+}
+
+message IapSettingsProto {
+  int32 DailyBonusCoins = 1;
+  repeated int32 DailyDefenderBonusPerPokemon = 2;
+  int32 DailyDefenderBonusMaxDefenders = 3;
+  repeated string DailyDefenderBonusCurrency = 4;
+  int64 MinTimeBetweenClaimsMs = 5;
+  bool DailyBonusEnabled = 6;
+  bool DailyDefenderBonusEnabled = 7;
+}
+
+message GetInventoryProto {
+  int64 TimestampMillis = 1;
+  repeated Holoholo.Rpc.Item ItemBeenSeen = 2;
+}
+message GetInventoryOutProto {
+  bool Success = 1;
+  InventoryDeltaProto InventoryDelta = 2;
+}
+
+message InventoryDeltaProto {
+  int64 OriginalTimestamp = 1;
+  int64 NewTimestamp = 2;
+  repeated InventoryItemProto InventoryItem = 3;
+}
+
+message InventoryItemProto {
+  int64 ModifiedTimestamp = 1;
+  bytes DeletedItemKey = 2;
+  bytes Item = 3;
+}
+
+message RecycleItemProto {
+  Holoholo.Rpc.Item Item = 1;
+  int32 Count = 2;
+}
+
+message RecycleItemOutProto {
+  enum ResultEnum {
+    UNSET = 0;
+    SUCCESS = 1;
+    ERROR_NOT_ENOUGH_COPIES = 2;
+    ERROR_CANNOT_RECYCLE_INCUBATORS = 3;
+  }
+
+  ResultEnum Result = 1;
+  int32 NewCount = 2;
+}
+
+message DebugUpdateInventoryProto {
+  repeated PokemonProto Pokemon = 1;
+  repeated ItemProto Item = 2;
+}
+
+message DebugUpdateInventoryOutProto {
+  bool Success = 1;
+}
+
+message HoloInventoryKeyProto {
+  uint64 PokemonId = 1;
+  Holoholo.Rpc.Item Item = 2;
+  int32 PokedexEntryId = 3;
+  bool PlayerStats = 4;
+  bool PlayerCurrency = 5;
+  bool PlayerCamera = 6;
+  bool InventoryUpgrades = 7;
+  bool AppliedItems = 8;
+  bool EggIncubators = 9;
+  int32 PokemonFamilyId = 10;
+}
+
+message InventoryProto {
+  repeated InventoryItemProto InventoryItem = 1;
+}
+
+message HoloInventoryItemProto {
+  PokemonProto Pokemon = 1;
+  ItemProto Item = 2;
+  PokedexEntryProto PokedexEntry = 3;
+  PlayerStatsProto PlayerStats = 4;
+  PlayerCurrencyProto PlayerCurrency = 5;
+  PlayerCameraProto PlayerCamera = 6;
+  InventoryUpgradesProto InventoryUpgrades = 7;
+  AppliedItemsProto AppliedItems = 8;
+  EggIncubatorsProto EggIncubators = 9;
+  PokemonFamilyProto PokemonFamily = 10;
+}
+
+message PokedexEntryProto {
+  int32 PokedexEntryNumber = 1;
+  int32 TimesEncountered = 2;
+  int32 TimesCaptured = 3;
+  int32 EvolutionStonePieces = 4;
+  int32 EvolutionStones = 5;
+}
+
+message PlayerStatsProto {
+  int32 Level = 1;
+  int64 Experience = 2;
+  int64 PrevLevelExp = 3;
+  int64 NextLevelExp = 4;
+  float KmWalked = 5;
+  int32 NumPokemonEncountered = 6;
+  int32 NumUniquePokedexEntries = 7;
+  int32 NumPokemonCaptured = 8;
+  int32 NumEvolutions = 9;
+  int32 PokeStopVisits = 10;
+  int32 NumberOfPokeballThrown = 11;
+  int32 NumEggsHatched = 12;
+  int32 BigMagikarpCaught = 13;
+  int32 NumBattleAttackWon = 14;
+  int32 NumBattleAttackTotal = 15;
+  int32 NumBattleDefendedWon = 16;
+  int32 NumBattleTrainingWon = 17;
+  int32 NumBattleTrainingTotal = 18;
+  int32 PrestigeRaisedTotal = 19;
+  int32 PrestigeDroppedTotal = 20;
+  int32 NumPokemonDeployed = 21;
+  repeated int32 NumPokemonCaughtByType = 22;
+  int32 SmallRattataCaught = 23;
+}
+
+message PlayerCurrencyProto {
+  int32 Gems = 1;
+}
+
+message PlayerCameraProto {
+  bool DefaultCamera = 1;
+}
+
+message InventoryUpgradesProto {
+  repeated InventoryUpgradeProto InventoryUpgrade = 1;
+}
+
+message InventoryUpgradeProto {
+  Rpc.Item Item = 1;
+  InventoryUpgradeType UpgradeType = 2;
+  int32 AdditionalStorage = 3;
+}
+
+enum InventoryUpgradeType {
+	UPGRADE_UNSET = 0;
+	INCREASE_ITEM_STORAGE = 1;
+	INCREASE_POKEMON_STORAGE = 2;
+}
+
+message EggIncubatorsProto {
+  repeated EggIncubatorProto EggIncubator = 1;
+}
+
+enum EggIncubatorType {
+	INCUBATOR_UNSET = 0;
+	INCUBATOR_DISTANCE = 1;
+}
+
+message EggIncubatorProto {
+  string ItemId = 1;
+  Rpc.Item Item = 2;
+  EggIncubatorType IncubatorType = 3;
+  int32 UsesRemaining = 4;
+  int64 PokemonId = 5;
+  double StartKmWalked = 6;
+  double TargetKmWalked = 7;
+}
+
+message AppliedItemsProto {
+  repeated AppliedItemProto Item = 4;
+}
+
+
+message PokemonFamilyProto {
+  HoloPokemonFamilyId FamilyId = 1;
+  int32 Candy = 2;
+}
+
+enum GetMapObjectsOutProtoStatus {
+  UNSET_STATUS = 0; // was originally "UNSET" in the app itself
+  SUCCESS = 1;
+  LOCATION_UNSET = 2;
+}
+
+// The get map objects request object
+message GetMapObjectsProto {
+  repeated uint64 CellId = 1;
+  repeated int64 SinceTimeMs = 2;
+  double PlayerLat = 3;
+  double PlayerLng = 4;
+}
+
+// The get map objects response object
+message GetMapObjectsOutProto {
+  repeated ClientMapCellProto MapCell = 1;
+  GetMapObjectsOutProtoStatus Status = 2;
+}
+
+// A cell is a geographical "zone" containing objects like pokemon, gyms, and pokestops
+message ClientMapCellProto {
+
+  // S2 geographic area that the cell covers (http://s2map.com/) (https://code.google.com/archive/p/s2-geometry-library/)
+  uint64 S2CellId = 1;
+
+  // current timestamp
+  int64 AsOfTimeMs = 2;
+
+  repeated PokemonFortProto Fort = 3;
+  repeated ClientSpawnPointProto SpawnPoint = 4;
+  repeated string DeletedObject = 6;
+  bool IsTruncatedList = 7;
+  repeated PokemonSummaryFortProto FortSummary = 8;
+  repeated ClientSpawnPointProto DecimatedSpawnPoint = 9;
+
+  // Pokemon farther away than 2 "steps", but still in the area (3 "steps" away)
+  repeated NearbyPokemonProto NearbyPokemon = 11;
+
+  // Each pokemon within 2 "steps" or closer will have a WildPokemonProto and MapPokemonProto object
+  repeated WildPokemonProto WildPokemon = 5;
+  repeated MapPokemonProto CatchablePokemon = 10;
+}
+
+message PokemonSummaryFortProto {
+  string FortSummaryId = 1;
+  int64 LastModifiedMs = 2;
+  double Latitude = 3;
+  double Longitude = 4;
+}
+
+message NearbyPokemonProto {
+  Custom_PokemonName PokedexNumber = 1;
+  float DistanceMeters = 2;
+  fixed64 EncounterId = 3;
+}
+
+message ClientSpawnPointProto {
+  double Latitude = 2;
+  double Longitude = 3;
+}
+
+message MapPokemonProto {
+  // S2 geographic area of the spawn point (http://s2map.com/) (https://code.google.com/archive/p/s2-geometry-library/)
+  string SpawnPointId = 1;
+
+  fixed64 EncounterId = 2;
+  Custom_PokemonName PokedexTypeId = 3;
+
+  // After this timestamp, the pokemon will be gone
+  int64 ExpirationTimeMs = 4;
+
+  double Latitude = 5;
+  double Longitude = 6;
+}
