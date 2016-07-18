@@ -5,7 +5,7 @@
 ###
 
 Proxy = require 'http-mitm-proxy'
-protobuf = require 'node-protobuf'
+POGOProtos = require 'pokemongo-protobuf'
 upperCamelCase = require 'uppercamelcase'
 fs = require 'fs'
 
@@ -15,7 +15,7 @@ class PokemonGoMITM
 
     # Init the Protobuf engine with the beautiful
     # Protos from https://github.com/AeonLucid/POGOProtos
-    @POGOProtos = new protobuf fs.readFileSync "POGOProtos.desc"
+    @POGOProtos = POGOProtos
 
     @setupProxy()
 
