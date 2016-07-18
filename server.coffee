@@ -11,7 +11,7 @@ fs = require 'fs'
 
 port = 8081
 
-POGOProtos = new p fs.readFileSync "POGOProtos.desc"
+POGOProtos = new protobuf fs.readFileSync "POGOProtos.desc"
 
 # Setup the MITM proxy
 proxy = Proxy()
