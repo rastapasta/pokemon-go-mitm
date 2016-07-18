@@ -8,7 +8,7 @@ Take a look at the **examples** to get started and feel happily invited to submi
 
 ## How to use it?
 * **npm install**
-* **coffee server.coffee**
+* **coffee example.replacePokeStops.coffee**
 * Run it once to get a CA certificate generated
 * Copy .http-mitm-proxy/certs/ca.pem to your Android device
 * Add it to "trusted certificates"
