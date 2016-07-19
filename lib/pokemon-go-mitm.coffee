@@ -7,7 +7,6 @@ Proxy = require 'http-mitm-proxy'
 POGOProtos = require 'pokemongo-protobuf'
 upperCamelCase = require 'uppercamelcase'
 fs = require 'fs'
-_ = require 'lodash'
 
 class PokemonGoMITM
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
@@ -42,13 +41,14 @@ class PokemonGoMITM
     requested = []
     ctx.onRequestData (ctx, buffer, callback) =>
       data = POGOProtos.parse buffer, @requestEnvelope
-      originalData = _.cloneDeep data
+      recode = false
 
       if @requestEnvelopeHandlers.length > 0
         clientCtx =
           url: ctx.clientToProxyRequest.url
         for handler in @requestEnvelopeHandlers
           data = handler(data, clientCtx) or data
+        recode = true
 
       for id,request of data.requests
         protoId = upperCamelCase request.request_type
@@ -68,10 +68,11 @@ class PokemonGoMITM
         if overwrite = @handleRequest protoId, decoded
           @log "[!] Overwriting "+proto
           request.request_message = POGOProtos.serialize overwrite, proto
+          recode = true
   
       @log "[+] Waiting for response..."
       
-      unless _.isEqual originalData, data
+      if recode
         buffer = POGOProtos.serialize data, @requestEnvelope
       
       ctx.proxyToServerRequest.write buffer
@@ -80,12 +81,13 @@ class PokemonGoMITM
     ### Server Response Handling ###
     ctx.onResponseData (ctx, buffer, callback) =>
       data = POGOProtos.parse buffer, @responseEnvelope
-      originalData = _.cloneDeep data
+      recode = false
 
       if @responseEnvelopeHandlers.length > 0
         clientCtx = {}
         for handler in @responseEnvelopeHandlers
           data = handler(data, clientCtx) or data
+        recode = true
 
       for id,response of data.returns
         proto = requested[id]
@@ -97,12 +99,13 @@ class PokemonGoMITM
           if overwrite = @handleResponse protoId, decoded
             @log "[!] Overwriting "+protoId
             data.returns[id] = POGOProtos.serialize overwrite, proto
+            recode = true
 
         else
           @log "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
       # Overwrite the response in case a hook hit the fan
-      unless _.isEqual originalData, data
+      if recode
         buffer = POGOProtos.serialize data, @responseEnvelope
 
       ctx.proxyToClientResponse.end buffer
