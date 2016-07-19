@@ -51,7 +51,7 @@ class PokemonGoMITM
 
       if @requestEnvelopeHandlers.length > 0
         for handler in @requestEnvelopeHandlers
-          data = handler data
+          data = handler(data) or data
         recode = true
 
       for id,request of data.requests
@@ -95,7 +95,7 @@ class PokemonGoMITM
 
       if @responseEnvelopeHandlers.length > 0
         for handler in @responseEnvelopeHandlers
-          data = handler data
+          data = handler(data) or data
         recode = true
 
       for id,response of data.returns
@@ -134,10 +134,7 @@ class PokemonGoMITM
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     if handlers.length > 0
       for handler in handlers
-        data = handler data
-        unless data
-          console.error "Handler for #{action} returned #{data}"
-          return false
+        data = handler(data) or data
 
       return data
 
@@ -150,10 +147,7 @@ class PokemonGoMITM
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     if handlers.length > 0
       for handler in handlers
-        data = handler data
-        unless data
-          console.error "Handler for #{action} returned #{data}"
-          return false
+        data = handler(data) or data
 
       return data
       return @responseHandlers[action] data
