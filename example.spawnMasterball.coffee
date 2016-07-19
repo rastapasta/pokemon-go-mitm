@@ -7,7 +7,10 @@
   Be aware: you can see it, you can touch it - you won't own it :)
 ###
 
-server.addResponseHandler "FortSearch", (data) ->
+PokemonGoMITM = require './lib/pokemon-go-mitm'
+
+server = new PokemonGoMITM port: 8081
+	.addResponseHandler "FortSearch", (data) ->
 		data.items_awarded = [
 			{item_type: 'ITEM_MASTER_BALL', item_count: 1}
 			{item_type: 'ITEM_SPECIAL_CAMERA', item_count: 1}
