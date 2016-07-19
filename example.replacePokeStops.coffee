@@ -21,8 +21,8 @@ server = new PokemonGoMITM port: 8081
 		data.items_awarded = [
 			{item_type: 'ITEM_MASTER_BALL', item_count: 1}
 			{item_type: 'ITEM_SPECIAL_CAMERA', item_count: 1}
-			{item_type: 'ITEM_WEPAR_BERRY', item_count: 1}
-			{item_type: 'ITEM_X_MIRACLE', item_count: 1}
+			{item_type: 'ITEM_PINAP_BERRY', item_count: 1}
+			{item_type: 'ITEM_STORAGE_UPGRADE', item_count: 1}
 		]
 		data.xp_awarded = 1337
 		data
