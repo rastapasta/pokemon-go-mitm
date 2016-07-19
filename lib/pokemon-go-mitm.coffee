@@ -119,8 +119,9 @@ class PokemonGoMITM
     @log "[+] Request for action #{action}: "
     @log data if data
 
-    if @requestHandlers[action]
-      for handler in @requestHandlers[action]
+    handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
+    if handlers.length > 0
+      for handler in handlers
         data = handler data
         unless data
           console.error "Handler for #{action} returned #{data}"
@@ -134,8 +135,9 @@ class PokemonGoMITM
     @log "[+] Response for action #{action}"
     @log data if data
 
-    if @responseHandlers[action]
-      for handler in @responseHandlers[action]
+    handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
+    if handlers.length > 0
+      for handler in handlers
         data = handler data
         unless data
           console.error "Handler for #{action} returned #{data}"
