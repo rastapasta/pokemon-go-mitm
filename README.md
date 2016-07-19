@@ -7,7 +7,8 @@ Take a look at the **examples** to get started and feel happily invited to submi
 ![screenshot](https://files.slack.com/files-pri/T1R4G4SH1-F1SHL752S/bildschirmfoto_2016-07-18_um_09.35.29.png?pub_secret=04cbc25c54)
 
 ## How to use it?
-* **npm install**
+* For development and examples, pull the master branch and do a **npm install**
+* To use it in another project go for **npm install --save pokemon-go-mitm**
 * **coffee example.replacePokeStops.coffee**
 * Run it once to get a CA certificate generated
 * Copy .http-mitm-proxy/certs/ca.pem to your Android device
@@ -29,19 +30,28 @@ server = new PokemonGoMITM port: 8081
 
 ## What's the status?
 
-Currently, following actions can be intercepted and altered on the fly:
+Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/POGOProtos), following actions can currently be intercepted and altered on the fly:
 
 ### Responses (coming back from the server)
 
 * CatchPokemon
 * CheckAwardedBadges
+* DiskEncounter
+* DownloadItemTemplates
+* DownloadRemoteConfigVersion
 * DownloadSettings
+* Encounter
+* EvolvePokemon
 * FortDetails
 * FortSearch
 * GetHatchedEggs
 * GetInventory
 * GetMapObjects
 * GetPlayer
+* PlayerUpdate
+* ReleasePokemon
+* UseItemCapture
+
 
 ### Requests (going from the app to the server)
 
