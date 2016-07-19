@@ -14,6 +14,8 @@ class PokemonGoMITM
 
   requestHandlers: {}
   responseHandlers: {}
+  requestEnvelopeHandlers: []
+  responseEnvelopeHandlers: []
 
   constructor: (options) ->
     @port = options.port or 8081
@@ -46,6 +48,11 @@ class PokemonGoMITM
       buffer = Buffer.concat requestChunks
       data = POGOProtos.parse buffer, @requestEnvelope
       recode = false
+
+      if @requestEnvelopeHandlers.length > 0
+        for handler in @requestEnvelopeHandlers
+          data = handler data
+        recode = true
 
       for id,request of data.requests
         protoId = upperCamelCase request.request_type
@@ -86,6 +93,11 @@ class PokemonGoMITM
       data = POGOProtos.parse buffer, @responseEnvelope
       recode = false
 
+      if @responseEnvelopeHandlers.length > 0
+        for handler in @responseEnvelopeHandlers
+          data = handler data
+        recode = true
+
       for id,response of data.returns
         proto = requested[id]
         if proto in POGOProtos.info()
@@ -119,8 +131,15 @@ class PokemonGoMITM
     @log "[+] Request for action #{action}: "
     @log data if data
 
-    if @requestHandlers[action]
-      return @requestHandlers[action] data
+    handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
+    if handlers.length > 0
+      for handler in handlers
+        data = handler data
+        unless data
+          console.error "Handler for #{action} returned #{data}"
+          return false
+
+      return data
 
     false
 
@@ -128,17 +147,43 @@ class PokemonGoMITM
     @log "[+] Response for action #{action}"
     @log data if data
 
-    if @responseHandlers[action]
+    handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
+    if handlers.length > 0
+      for handler in handlers
+        data = handler data
+        unless data
+          console.error "Handler for #{action} returned #{data}"
+          return false
+
+      return data
       return @responseHandlers[action] data
 
     false
 
   setResponseHandler: (action, cb) ->
-    @responseHandlers[action] = cb
+    @addResponseHandler action, cb
+    this
+
+  addResponseHandler: (action, cb) ->
+    @responseHandlers[action] ?= []
+    @responseHandlers[action].push(cb)
     this
 
   setRequestHandler: (action, cb) ->
-    @requestHandlers[action] = cb
+    @addRequestHandler action, cb
+    this
+
+  addRequestHandler: (action, cb) ->
+    @requestHandlers[action] ?= []
+    @requestHandlers[action].push(cb)
+    this
+
+  addRequestEnvelopeHandler: (cb, name=undefined) ->
+    @requestEnvelopeHandlers.push cb
+    this
+
+  addResponseEnvelopeHandler: (cb, name=undefined) ->
+    @responseEnvelopeHandlers.push cb
     this
 
   log: (text) ->
