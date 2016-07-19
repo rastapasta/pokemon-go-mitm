@@ -18,6 +18,8 @@ class PokemonGoMITM
   requestEnvelopeHandlers: []
   responseEnvelopeHandlers: []
 
+  messageInjectQueue: []
+
   constructor: (options) ->
     @port = options.port or 8081
     @debug = options.debug or false
@@ -73,6 +75,12 @@ class PokemonGoMITM
           @log "[!] Overwriting "+proto
           request.request_message = POGOProtos.serialize overwrite, proto
   
+      for message in @messageInjectQueue
+        @log "[+] Injecting request to #{message.action}"
+        @log message.data if message
+        requested.push "POGOProtos.Networking.Responses.#{message.action}Response"
+        data.requests.push POGOProtos.serialize message, "POGOProtos.Networking.Requests.Messages.#{message.action}Message"
+
       @log "[+] Waiting for response..."
       
       unless _.isEqual originalData, data
@@ -146,6 +154,15 @@ class PokemonGoMITM
       return data
 
     false
+
+  injectMessage: (action, data) ->
+    unless "POGOProtos.Networking.Requests.Messages.#{message.action}Message" in POGOProtos.info()
+      @log "[-] Can't inject action #{action} - proto not implemented"
+      return
+
+    @messageInjectQueue.push
+      type: action
+      data: data
 
   setResponseHandler: (action, cb) ->
     @addResponseHandler action, cb
