@@ -19,4 +19,6 @@ server = new PokemonGoMITM port: 8081
 				if pokemon = item.inventory_item_data.pokemon_data
 					pokemon.pokemon_id = biggest--
 					pokemon.cp = 1337
+
+					break unless biggest
 		data
