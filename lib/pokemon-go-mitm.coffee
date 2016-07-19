@@ -41,11 +41,7 @@ class PokemonGoMITM
     ### Client Reuqest Handling ###
     requested = []
     ctx.onRequestData (ctx, buffer, callback) =>
-      try
-        data = POGOProtos.parse buffer, @requestEnvelope
-      catch e
-        @log "[-] Unknown protobuf"
-        return
+      data = POGOProtos.parse buffer, @requestEnvelope
       originalData = _.cloneDeep data
 
       if @requestEnvelopeHandlers.length > 0
@@ -83,11 +79,7 @@ class PokemonGoMITM
 
     ### Server Response Handling ###
     ctx.onResponseData (ctx, buffer, callback) =>
-      try
-        data = POGOProtos.parse buffer, @responseEnvelope
-      catch e
-        @log "[-] Unknown protobuf"
-        return
+      data = POGOProtos.parse buffer, @responseEnvelope
       originalData = _.cloneDeep data
 
       if @responseEnvelopeHandlers.length > 0
