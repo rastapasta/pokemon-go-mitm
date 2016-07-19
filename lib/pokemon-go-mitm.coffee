@@ -38,8 +38,14 @@ class PokemonGoMITM
     @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
+    requestChunks = []
+    ctx.onRequestData (ctx, chunk, callback) =>
+      requestChunks.push chunk
+      callback null, null
+
     requested = []
-    ctx.onRequestData (ctx, buffer, callback) =>
+    ctx.onRequestEnd (ctx, callback) =>
+      buffer = Buffer.concat requestChunks
       data = POGOProtos.parse buffer, @requestEnvelope
       recode = false
 
@@ -79,7 +85,13 @@ class PokemonGoMITM
       callback()
 
     ### Server Response Handling ###
-    ctx.onResponseData (ctx, buffer, callback) =>
+    responseChunks = []
+    ctx.onResponseData (ctx, chunk, callback) =>
+      responseChunks.push chunk
+      callback()
+
+    ctx.onResponseEnd (ctx, callback) =>
+      buffer = Buffer.concat responseChunks
       data = POGOProtos.parse buffer, @responseEnvelope
       recode = false
 
