@@ -50,10 +50,10 @@ class PokemonGoMITM
       recode = false
 
       if @requestEnvelopeHandlers.length > 0
-        ctx =
+        clientCtx =
           url: ctx.clientToProxyRequest.url
         for handler in @requestEnvelopeHandlers
-          data = handler(data, ctx) or data
+          data = handler(data, clientCtx) or data
         recode = true
 
       for id,request of data.requests
@@ -96,9 +96,9 @@ class PokemonGoMITM
       recode = false
 
       if @responseEnvelopeHandlers.length > 0
-        ctx = {}
+        clientCtx = {}
         for handler in @responseEnvelopeHandlers
-          data = handler(data, ctx) or data
+          data = handler(data, clientCtx) or data
         recode = true
 
       for id,response of data.returns
