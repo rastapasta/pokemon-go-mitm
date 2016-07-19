@@ -154,7 +154,6 @@ class PokemonGoMITM
         data = handler(data, action) or data
 
       return data
-      return @responseHandlers[action] data
 
     false
 
