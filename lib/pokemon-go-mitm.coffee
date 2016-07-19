@@ -120,7 +120,13 @@ class PokemonGoMITM
     @log data if data
 
     if @requestHandlers[action]
-      return @requestHandlers[action] data
+      for handler in @requestHandlers[action]
+        data = handler data
+        unless data
+          console.error "Handler for #{action} returned #{data}"
+          return false
+
+      return data
 
     false
 
@@ -129,16 +135,31 @@ class PokemonGoMITM
     @log data if data
 
     if @responseHandlers[action]
+      for handler in @responseHandlers[action]
+        data = handler data
+        unless data
+          console.error "Handler for #{action} returned #{data}"
+          return false
+
+      return data
       return @responseHandlers[action] data
 
     false
 
   setResponseHandler: (action, cb) ->
-    @responseHandlers[action] = cb
+    @addResponseHandler action, cb
+
+  addResponseHandler: (action, cb) ->
+    @responseHandlers[action] ?= []
+    @responseHandlers[action].push(cb)
     this
 
   setRequestHandler: (action, cb) ->
-    @requestHandlers[action] = cb
+    @addRequestHandler action, cb
+
+  addRequestHandler: (action, cb) ->
+    @requestHandlers[action] ?= []
+    @requestHandlers[action].push(cb)
     this
 
   log: (text) ->
