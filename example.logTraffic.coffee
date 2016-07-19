@@ -2,7 +2,7 @@
   Pokemon Go(c) MITM node proxy
   by Michael Strassburger <codepoet@cpan.org>
 
-  This example just dumps all incoming and outgoing message and response
+  This example just dumps all in-/outgoing messages and responses
 
 ###
 
