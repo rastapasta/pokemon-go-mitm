@@ -1,6 +1,6 @@
 {
-  "name": "pokemon-go-mitm-node",
-  "version": "0.0.1",
+  "name": "pokemon-go-mitm",
+  "version": "1.0.0",
   "description": "Pokemon Go MITM proxy",
   "main": "index.js",
   "scripts": {
