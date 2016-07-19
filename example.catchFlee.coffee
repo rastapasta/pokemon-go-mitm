@@ -11,6 +11,6 @@
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 
 server = new PokemonGoMITM port: 8081
-	.setResponseHandler "CatchPokemon", (data) ->
+	.addResponseHandler "CatchPokemon", (data) ->
 		data.status = 'CATCH_FLEE' if data.status is 'CATCH_SUCCESS'
 		data

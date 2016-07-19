@@ -21,11 +21,20 @@ Take a look at the **examples** to get started and feel happily invited to submi
 ```coffeescript
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
-	.setResponseHandler "FortDetails", (data) ->
+	.addResponseHandler "FortDetails", (data) ->
 		data.name = "Pokemon GO MitM PoC"
 		data.description = "meow!"
 		data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
 		data
+
+	.addRequestHandler "*", (data, action) ->
+		console.log "[<-] Request for #{action} ", data
+		false
+
+	.addResponseHandler "*", (data, action) ->
+		console.log "[->] Response for #{action} ", data
+		false
+
 ```
 
 ## What's the status?

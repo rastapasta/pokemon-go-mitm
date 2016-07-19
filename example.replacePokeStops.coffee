@@ -11,13 +11,13 @@
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 
 server = new PokemonGoMITM port: 8081
-	.setResponseHandler "FortDetails", (data) ->
+	.addResponseHandler "FortDetails", (data) ->
 		data.name = "Pokemon GO MitM PoC"
 		data.description = "meow!"
 		data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
 		data
 
-	.setResponseHandler "FortSearch", (data) ->
+	.addResponseHandler "FortSearch", (data) ->
 		data.items_awarded = [
 			{item_type: 'ITEM_MASTER_BALL', item_count: 1}
 			{item_type: 'ITEM_SPECIAL_CAMERA', item_count: 1}
