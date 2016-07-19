@@ -134,7 +134,7 @@ class PokemonGoMITM
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     if handlers.length > 0
       for handler in handlers
-        data = handler(data) or data
+        data = handler(data, action) or data
 
       return data
 
@@ -147,7 +147,7 @@ class PokemonGoMITM
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     if handlers.length > 0
       for handler in handlers
-        data = handler(data) or data
+        data = handler(data, action) or data
 
       return data
       return @responseHandlers[action] data
