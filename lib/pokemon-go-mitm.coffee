@@ -14,6 +14,8 @@ class PokemonGoMITM
 
   requestHandlers: {}
   responseHandlers: {}
+  requestEnvelopeHandlers: []
+  responseEnvelopeHandlers: []
 
   constructor: (options) ->
     @port = options.port or 8081
@@ -46,6 +48,11 @@ class PokemonGoMITM
       buffer = Buffer.concat requestChunks
       data = POGOProtos.parse buffer, @requestEnvelope
       recode = false
+
+      if @requestEnvelopeHandlers.length > 0
+        for handler in @requestEnvelopeHandlers
+          data = handler data
+        recode = true
 
       for id,request of data.requests
         protoId = upperCamelCase request.request_type
@@ -85,6 +92,11 @@ class PokemonGoMITM
       buffer = Buffer.concat responseChunks
       data = POGOProtos.parse buffer, @responseEnvelope
       recode = false
+
+      if @responseEnvelopeHandlers.length > 0
+        for handler in @responseEnvelopeHandlers
+          data = handler data
+        recode = true
 
       for id,response of data.returns
         proto = requested[id]
@@ -150,6 +162,7 @@ class PokemonGoMITM
 
   setResponseHandler: (action, cb) ->
     @addResponseHandler action, cb
+    this
 
   addResponseHandler: (action, cb) ->
     @responseHandlers[action] ?= []
@@ -158,10 +171,19 @@ class PokemonGoMITM
 
   setRequestHandler: (action, cb) ->
     @addRequestHandler action, cb
+    this
 
   addRequestHandler: (action, cb) ->
     @requestHandlers[action] ?= []
     @requestHandlers[action].push(cb)
+    this
+
+  addRequestEnvelopeHandler: (cb, name=undefined) ->
+    @requestEnvelopeHandlers.push cb
+    this
+
+  addResponseEnvelopeHandler: (cb, name=undefined) ->
+    @responseEnvelopeHandlers.push cb
     this
 
   log: (text) ->
