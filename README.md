@@ -8,7 +8,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 ## How to use it?
 * For development and examples, pull the master branch and do a **npm install**
 * To use it in another project go for **npm install --save pokemon-go-mitm**
-* **coffee example.replacePokeStops.coffee**
+* **coffee example.logTraffic.coffee**
 * Run it once to get a CA certificate generated
 * Copy .http-mitm-proxy/certs/ca.pem to your Android or iPhone
 * Add it to "trusted certificates"
