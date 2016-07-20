@@ -5,7 +5,7 @@
 
 Proxy = require 'http-mitm-proxy'
 POGOProtos = require 'pokemongo-protobuf'
-upperCamelCase = require 'uppercamelcase'
+changeCase = require 'change-case'
 fs = require 'fs'
 _ = require 'lodash'
 
@@ -57,7 +57,7 @@ class PokemonGoMITM
         data = handler(data, url: ctx.clientToProxyRequest.url) or data
 
       for id,request of data.requests
-        protoId = upperCamelCase request.request_type
+        protoId = changeCase.pascalCase request.request_type
       
         # Queue the ProtoId for the response handling
         requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
@@ -76,10 +76,15 @@ class PokemonGoMITM
           request.request_message = POGOProtos.serialize overwrite, proto
   
       for message in @messageInjectQueue
-        @log "[+] Injecting request to #{message.action}"
-        @log message.data if message
+        console.log "[+] Injecting request to #{message.action}"
+        console.log message.data if message
+
         requested.push "POGOProtos.Networking.Responses.#{message.action}Response"
-        data.requests.push POGOProtos.serialize message, "POGOProtos.Networking.Requests.Messages.#{message.action}Message"
+        data.requests.push
+          request_type: changeCase.constantCase message.action
+          request_message: POGOProtos.serialize message.data, "POGOProtos.Networking.Requests.Messages.#{message.action}Message"
+
+      @messageInjectQueue = []
 
       @log "[+] Waiting for response..."
       
@@ -156,12 +161,12 @@ class PokemonGoMITM
     false
 
   injectMessage: (action, data) ->
-    unless "POGOProtos.Networking.Requests.Messages.#{message.action}Message" in POGOProtos.info()
+    unless "POGOProtos.Networking.Requests.Messages.#{action}Message" in POGOProtos.info()
       @log "[-] Can't inject action #{action} - proto not implemented"
       return
 
     @messageInjectQueue.push
-      type: action
+      action: action
       data: data
 
   setResponseHandler: (action, cb) ->
