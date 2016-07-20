@@ -8,7 +8,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 ## How to use it?
 * Get [nodejs](https://nodejs.org/en)
 * Get protobuf >= 3
-  * Linux: libprotobuf must be present (`apt-get installing libprotobuf-dev`)
+  * Linux: libprotobuf must be present (`apt-get install libprotobuf-dev`)
   * OSX: Use `homebrew` to install `protobuf` with `brew install --devel protobuf`
   * Windows: hard to compile - follow [advices](https://github.com/fuwaneko/node-protobuf#windows)
 
