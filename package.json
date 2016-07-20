@@ -17,7 +17,10 @@
     "coffee-script": "^1.10.0",
     "http-mitm-proxy": "^0.5.1",
     "lodash": "^4.13.1",
-    "pokemongo-protobuf": "^1.4.0",
-    "uppercamelcase": "^1.1.0"
+    "pokemongo-protobuf": "^1.4.0"
+  },
+  "devDependencies": {
+    "geodesy": "^1.1.0",
+    "moment": "^2.14.1"
   }
 }
