@@ -3,7 +3,7 @@ Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and t
 
 Take a look at the **examples** to get started. Feel happily invited to contribute more!
 
-<img width="22%" src="https://files.slack.com/files-pri/T1R4G4SH1-F1SL5TJSD/9a257af3-0c76-4fe4-b396-3cc6b7ed4a29.jpg?pub_secret=8d2362ba2e" /> <a href="https://www.youtube.com/watch?v=7lZQLSt7uc0"><img width="22%" src="https://i.imgur.com/dhqU6jz.jpg" /></a> <img width="20%" src="https://i.imgur.com/lkErths.png" /> <img width="22%" src="https://i.imgur.com/XaEcgsQ.jpg">
+<img width="22%" src="https://files.slack.com/files-pri/T1R4G4SH1-F1SL5TJSD/9a257af3-0c76-4fe4-b396-3cc6b7ed4a29.jpg?pub_secret=8d2362ba2e" /> <a href="https://www.youtube.com/watch?v=7lZQLSt7uc0"><img width="22%" src="https://i.imgur.com/dhqU6jz.jpg" /></a> <img width="22%" src="https://i.imgur.com/lkErths.png" /> <img width="22%" src="https://i.imgur.com/XaEcgsQ.jpg">
 
 ## How to use it?
 * For development and examples, pull the master branch and do a **npm install**
