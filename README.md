@@ -11,7 +11,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 * To use it in another project go for **npm install --save pokemon-go-mitm**
 * **coffee example.replacePokeStops.coffee**
 * Run it once to get a CA certificate generated
-* Copy .http-mitm-proxy/certs/ca.pem to your Android device
+* Copy .http-mitm-proxy/certs/ca.pem to your Android or iPhone
 * Add it to "trusted certificates"
 * Setup your connection to use your server as a proxy (default port is 8081)
 * Enjoy :)
