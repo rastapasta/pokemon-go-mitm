@@ -6,13 +6,30 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 <img width="22%" src="https://files.slack.com/files-pri/T1R4G4SH1-F1SL5TJSD/9a257af3-0c76-4fe4-b396-3cc6b7ed4a29.jpg?pub_secret=8d2362ba2e" /> <a href="https://www.youtube.com/watch?v=7lZQLSt7uc0"><img width="22%" src="https://i.imgur.com/dhqU6jz.jpg" /></a> <img width="22%" src="https://i.imgur.com/lkErths.png" /> <img width="22%" src="https://i.imgur.com/XaEcgsQ.jpg">
 
 ## How to use it?
-* For development and examples, pull the master branch and do a **npm install**
-* To use it in another project go for **npm install --save pokemon-go-mitm**
-* **coffee example.logTraffic.coffee**
-* Run it once to get a CA certificate generated
-* Copy .http-mitm-proxy/certs/ca.pem to your Android or iPhone
-* Add it to "trusted certificates"
-* Setup your connection to use your server as a proxy (default port is 8081)
+* Get [nodejs](https://nodejs.org/en)
+* Get protobuf >= 3
+  * Linux: libprotobuf must be present (`apt-get install libprotobuf-dev`)
+  * OSX: Use [homebrew](http://brew.sh/) to install `protobuf` with `brew install --devel protobuf`
+  * Windows: hard to compile - follow [advices](https://github.com/fuwaneko/node-protobuf#windows)
+
+* Clone the code to experiment with the examples! (otherwise use it as a [npm package](https://www.npmjs.com/package/pokemon-go-mitm))
+
+`git clone https://github.com/rastapasta/pokemon-go-mitm-node.git && cd pokemon-go-mitm-node`
+
+`npm install`
+
+* Setup the [CoffeeScript](http://coffeescript.org/) interpreter
+
+`npm install -g coffee-script`
+
+
+* Run and quit one of the examples once to get a CA certificate generated
+
+`coffee example.logTraffic.coffee`
+
+* Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
+* Add it to the "trusted certificates"
+* Setup your connection to use your machine as a proxy (default port is 8081)
 * Enjoy :)
 
 ## How to code it?
