@@ -39,31 +39,63 @@ server = new PokemonGoMITM port: 8081
 
 ## What's the status?
 
-Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/POGOProtos), following actions can currently be intercepted and altered on the fly:
+Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/POGOProtos), all actions can be intercepted and altered on the fly by now!
 
 ### Responses (coming back from the server)
 
-* CatchPokemon
-* CheckAwardedBadges
-* DiskEncounter
-* DownloadItemTemplates
-* DownloadRemoteConfigVersion
-* DownloadSettings
-* Encounter
-* EvolvePokemon
-* FortDetails
-* FortSearch
-* GetHatchedEggs
-* GetInventory
-* GetMapObjects
-* GetPlayer
-* PlayerUpdate
-* ReleasePokemon
-* UseItemCapture
-
+* AddFortModifierMessage
+* AttackGymMessage
+* CatchPokemonMessage
+* CheckAwardedBadgesMessage
+* CheckCodenameAvailableMessage
+* ClaimCodenameMessage
+* CollectDailyBonusMessage
+* CollectDailyDefenderBonusMessage
+* DiskEncounterMessage
+* DownloadItemTemplatesMessage
+* DownloadRemoteConfigVersionMessage
+* DownloadSettingsMessage
+* EchoMessage
+* EncounterMessage
+* EncounterTutorialCompleteMessage
+* EquipBadgeMessage
+* EvolvePokemonMessage
+* FortDeployPokemonMessage
+* FortDetailsMessage
+* FortRecallPokemonMessage
+* FortSearchMessage
+* GetAssetDigestMessage
+* GetDownloadUrlsMessage
+* GetGymDetailsMessage
+* GetHatchedEggsMessage
+* GetIncensePokemonMessage
+* GetInventoryMessage
+* GetMapObjectsMessage
+* GetPlayerMessage
+* GetPlayerProfileMessage
+* GetSuggestedCodenamesMessage
+* IncenseEncounterMessage
+* LevelUpRewardsMessage
+* NicknamePokemonMessage
+* PlayerUpdateMessage
+* RecycleInventoryItemMessage
+* ReleasePokemonMessage
+* SetAvatarMessage
+* SetContactSettingsMessage
+* SetFavoritePokemonMessage
+* SetPlayerTeamMessage
+* StartGymBattleMessage
+* UpgradePokemonMessage
+* UseIncenseMessage
+* UseItemCaptureMessage
+* UseItemEggIncubatorMessage
+* UseItemGymMessage
+* UseItemPotionMessage
+* UseItemReviveMessage
+* UseItemXpBoostMessage
 
 ### Requests (going from the app to the server)
 
-* soon!
+* in testing phase
 
 Enjoy! And heaps of thanks to everyone who contributed here and on slack!
