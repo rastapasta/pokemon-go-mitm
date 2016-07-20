@@ -15,7 +15,13 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 * Get the code!
 
 `git clone https://github.com/rastapasta/pokemon-go-mitm-node.git && cd pokemon-go-mitm-node`
+
 `npm install`
+
+* Setup the [CoffeeScript](http://coffeescript.org/) interpreter
+
+`npm install -g coffee-script`
+
 
 * Run and quit one of the examples once to get a CA certificate generated
 
