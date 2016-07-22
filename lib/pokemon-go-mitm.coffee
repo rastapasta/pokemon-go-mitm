@@ -204,7 +204,7 @@ class PokemonGoMITM
       action: action
       data: data
 
-  craftRequest: (action, data, requestEnvelope=@lastRequest) ->
+  craftRequest: (action, data, requestEnvelope=@lastRequest, url=undefined) ->
     @log "[+] Crafting request for #{action}"
 
     requestEnvelope.request_id ?= 1000000000000000000-Math.floor(Math.random()*1000000000000000000)
@@ -217,9 +217,11 @@ class PokemonGoMITM
     _.defaults requestEnvelope, @lastRequest
 
     buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+    url ?= @lastCtx.clientToProxyRequest.headers.host + '/' + @lastCtx.clientToProxyRequest.url
 
     return rp(
-      url: @lastCtx.clientToProxyRequest.url
+      hostname: @lastCtx.clientToProxyRequest.headers.host
+      url: url
       method: 'POST'
       body: buffer
       headers:
