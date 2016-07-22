@@ -37,12 +37,23 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 ```coffeescript
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
+	
+	# Replace all PokeStops with kittys!
 	.addResponseHandler "FortDetails", (data) ->
 		data.name = "Pokemon GO MitM PoC"
 		data.description = "meow!"
 		data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
 		data
 
+	# Every throw you hit is a super-duper-curved ball -> +XP
+	.addRequestHandler "CatchPokemon", (data) ->
+		data.normalized_reticle_size = 1.950
+		data.spin_modifier = 0.850
+		if data.hit_pokemon
+			data.normalized_hit_position = 1.0
+		data
+
+	# Catch all requests/reponses to log them
 	.addRequestHandler "*", (data, action) ->
 		console.log "[<-] Request for #{action} ", data
 		false
