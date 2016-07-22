@@ -9,7 +9,8 @@ changeCase = require 'change-case'
 https = require 'https'
 fs = require 'fs'
 _ = require 'lodash'
-request = require 'request-promise'
+request = require 'request'
+rp = require 'request-promise'
 Promise = require 'bluebird'
 
 class PokemonGoMITM
@@ -217,7 +218,7 @@ class PokemonGoMITM
 
     buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
-    return request(
+    return rp(
       url: @lastCtx.clientToProxyRequest.url
       method: 'POST'
       body: buffer
