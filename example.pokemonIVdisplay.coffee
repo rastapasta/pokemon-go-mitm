@@ -20,7 +20,7 @@ server = new PokemonGoMITM port: 8081
 		if data.inventory_delta
 			for item in data.inventory_delta.inventory_items
 				if pokemon = item.inventory_item_data.pokemon_data
-					iv = (pokemon.individual_attack + pokemon.individual_defense + pokemon.individual_stamina)/45.0*100;
+					iv = ((pokemon.individual_attack or 0)+(pokemon.individual_defense or 0)+(pokemon.individual_stamina or 0))/45.0*100;
 					iv = Math.floor(iv*10)/10
 					pokemon.nickname = "IV: #{iv}%"
 		data
