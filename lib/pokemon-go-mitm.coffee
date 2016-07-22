@@ -213,6 +213,8 @@ class PokemonGoMITM
       request_message: POGOProtos.serialize data, "POGOProtos.Networking.Requests.Messages.#{changeCase.pascalCase action}Message"
     ]
 
+    _.defaults requestEnvelope, @lastRequest
+
     buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
     return request(
