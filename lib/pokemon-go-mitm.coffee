@@ -42,14 +42,20 @@ class PokemonGoMITM
 
     ### Client Reuqest Handling ###
     requested = []
+    requestChunks = []
     injected = 0
-    ctx.onRequestData (ctx, buffer, callback) =>
+    ctx.onRequestData (ctx, chunk, callback) =>
+      requestChunks.push chunk
+      callback null,null
+
+    ctx.onRequestEnd (ctx, callback) =>
+      buffer = Buffer.concat requestChunks
       try
         data = POGOProtos.parse buffer, @requestEnvelope
       catch e
         @log "[-] Parsing protobuf of RequestEnvelope failed.."
         ctx.proxyToServerRequest.write buffer
-        return callback null, buffer
+        return callback()
 
       originalData = _.cloneDeep data
 
@@ -101,9 +107,10 @@ class PokemonGoMITM
         @log "[+] Recoding RequestEnvelope"
         buffer = POGOProtos.serialize data, @requestEnvelope
 
+      ctx.proxyToServerRequest.write buffer
+
       @log "[+] Waiting for response..."
-      
-      callback null, buffer
+      callback()
 
     ### Server Response Handling ###
     responseChunks = []
