@@ -241,7 +241,7 @@ class PokemonGoMITM
         catch e
           @log "[-] Parsing of response to crafted #{action} failed: #{e}"
           throw e
-      ).catch(e) =>
+      ).catch (e) =>
         @log "[-] Crafting a request failed with #{e}"
         throw e
 
