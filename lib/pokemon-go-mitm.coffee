@@ -9,6 +9,8 @@ changeCase = require 'change-case'
 https = require 'https'
 fs = require 'fs'
 _ = require 'lodash'
+request = require 'request-promise'
+Promise = require 'bluebird'
 
 class PokemonGoMITM
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
@@ -201,50 +203,42 @@ class PokemonGoMITM
       action: action
       data: data
 
-  craftRequest: (action, data, cb) ->
+  craftRequest: (action, data, requestEnvelope=@lastRequest) ->
     @log "[+] Crafting request for #{action}"
 
-    @lastRequest.request_id = 1000000000000000000-Math.floor(Math.random()*1000000000000000000)
+    requestEnvelope.request_id ?= 1000000000000000000-Math.floor(Math.random()*1000000000000000000)
 
-    @lastRequest.requests = [
+    requestEnvelope.requests = [
       request_type: changeCase.constantCase action
       request_message: POGOProtos.serialize data, "POGOProtos.Networking.Requests.Messages.#{changeCase.pascalCase action}Message"
     ]
 
-    buffer = POGOProtos.serialize @lastRequest, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+    buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
-    req = https.request 
-      hostname: @lastCtx.clientToProxyRequest.headers.host
-      port: 443
-      path: @lastCtx.clientToProxyRequest.url
+    return request(
+      url: @lastCtx.clientToProxyRequest.url
       method: 'POST'
+      body: buffer
       headers:
         'Content-Type': 'application/x-www-form-urlencoded'
         'Content-Length': Buffer.byteLength buffer
         'Connection': 'Close'
-        'User-Agent': @lastCtx.clientToProxyRequest.headers['user-agent']
-      (res) =>
-        data = []
-        res.on 'data', (chunk) -> data.push chunk
-        res.on 'end', =>
-          buffer = Buffer.concat data
-
-          try
-            @log "[+] Response for crafted #{action}"
-            
-            decoded = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
-            data = POGOProtos.parse decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
-            
-            @log data
-            cb data
-          catch e
-            @log "[-] Parsing of response to crafted #{action} failed: #{e}"
-
-    req.on 'error', (e) =>
-      @log "[-] Crafting a request failed with #{e}"
-
-    req.write buffer
-    req.end()
+        'User-Agent': @lastCtx?.clientToProxyRequest?.headers['user-agent']
+      ).then((buffer) =>
+        try
+          @log "[+] Response for crafted #{action}"
+          
+          decoded = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
+          data = POGOProtos.parse decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
+          
+          @log data
+          data
+        catch e
+          @log "[-] Parsing of response to crafted #{action} failed: #{e}"
+          throw e
+      ).catch(e) =>
+        @log "[-] Crafting a request failed with #{e}"
+        throw e
 
   setResponseHandler: (action, cb) ->
     @addResponseHandler action, cb
