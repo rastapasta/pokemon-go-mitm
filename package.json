@@ -13,11 +13,14 @@
   "author": "Michael Strassburger <codepoet@cpan.org>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.4.1",
     "change-case": "^3.0.0",
     "coffee-script": "^1.10.0",
     "http-mitm-proxy": "git+https://github.com/joeferner/node-http-mitm-proxy.git",
     "lodash": "^4.13.1",
-    "pokemongo-protobuf": "^1.5.0"
+    "pokemongo-protobuf": "^1.5.0",
+    "request": "^2.73.0",
+    "request-promise": "^4.0.2"
   },
   "devDependencies": {
     "geodesy": "^1.1.0",
