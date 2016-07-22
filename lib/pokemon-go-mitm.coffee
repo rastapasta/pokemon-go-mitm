@@ -224,6 +224,7 @@ class PokemonGoMITM
       url: url
       method: 'POST'
       body: buffer
+      encoding: null
       headers:
         'Content-Type': 'application/x-www-form-urlencoded'
         'Content-Length': Buffer.byteLength buffer
