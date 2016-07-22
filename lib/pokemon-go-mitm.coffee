@@ -217,7 +217,7 @@ class PokemonGoMITM
     _.defaults requestEnvelope, @lastRequest
 
     buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
-    url ?= @lastCtx.clientToProxyRequest.headers.host + '/' + @lastCtx.clientToProxyRequest.url
+    url ?= 'https://' + @lastCtx.clientToProxyRequest.headers.host + '/' + @lastCtx.clientToProxyRequest.url
 
     return rp(
       hostname: @lastCtx.clientToProxyRequest.headers.host
