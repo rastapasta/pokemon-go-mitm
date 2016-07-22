@@ -55,9 +55,7 @@ server = new PokemonGoMITM port: 8081
 
 ## What's the status?
 
-Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/POGOProtos), all actions can be intercepted and altered on the fly by now!
-
-### Responses (coming back from the server)
+Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/POGOProtos), all requests and responses can be intercepted and altered on the fly by now!
 
 * AddFortModifier
 * AttackGym
@@ -109,9 +107,5 @@ Thanks to the awesom work done around [POGOProtos](https://github.com/AeonLucid/
 * UseItemPotion
 * UseItemRevive
 * UseItemXpBoost
-
-### Requests (going from the app to the server)
-
-* in testing phase
 
 Enjoy! And heaps of thanks to everyone who contributed here and on slack!
