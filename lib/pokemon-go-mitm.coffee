@@ -41,14 +41,15 @@ class PokemonGoMITM
     @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
-    requested = [] 
+    requested = []
+    injected = 0
     ctx.onRequestData (ctx, buffer, callback) =>
       try
         data = POGOProtos.parse buffer, @requestEnvelope
       catch e
-          @log "[-] Parsing protobuf of RequestEnvelope failed.."
-          ctx.proxyToServerRequest.write buffer
-          return callback null, buffer
+        @log "[-] Parsing protobuf of RequestEnvelope failed.."
+        ctx.proxyToServerRequest.write buffer
+        return callback null, buffer
 
       originalData = _.cloneDeep data
 
@@ -74,28 +75,31 @@ class PokemonGoMITM
           @log "[-] Parsing protobuf of #{protoId} failed.."
           continue
         
-        # TODO
-        if overwrite = @handleRequest protoId, decoded
-          unless _.isEqual overwrite, decoded
-            @log "[!] Overwriting "+protoId
-            request.request_message = POGOProtos.serialize overwrite, proto
+        originalRequest = _.cloneDeep decoded
+        afterHandlers = @handleRequest protoId, decoded
 
-      # TODO
-      # for request in @requestInjectQueue
-      #   @log "[+] Injecting request to #{request.action}"
+        unless _.isEqual originalRequest, afterHandlers
+          @log "[!] Overwriting "+protoId
+          request.request_message = POGOProtos.serialize afterHandlers, proto
 
-      #   requested.push "POGOProtos.Networking.Responses.#{request.action}Response"
-      #   data.requests.push
-      #     request_type: changeCase.constantCase request.action
-      #     request_message: POGOProtos.serialize request.data, "POGOProtos.Networking.Requests.Messages.#{request.action}Message"
+      for request in @requestInjectQueue
+        unless data.requests.length < 5
+          @log "[-] Delaying inject of #{request.action} because RequestEnvelope is full"
+          break
 
-      # @requestInjectQueue = []
+        @log "[+] Injecting request to #{request.action}"
+        injected++
+
+        requested.push "POGOProtos.Networking.Responses.#{request.action}Response"
+        data.requests.push
+          request_type: changeCase.constantCase request.action
+          request_message: POGOProtos.serialize request.data, "POGOProtos.Networking.Requests.Messages.#{request.action}Message"
+
+      @requestInjectQueue = []
 
       unless _.isEqual originalData, data
         @log "[+] Recoding RequestEnvelope"
-        @log data
         buffer = POGOProtos.serialize data, @requestEnvelope
-        @log POGOProtos.parse buffer, @requestEnvelope
 
       @log "[+] Waiting for response..."
       
@@ -112,9 +116,9 @@ class PokemonGoMITM
       try
         data = POGOProtos.parse buffer, @responseEnvelope
       catch e
-          @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
-          ctx.proxyToClientResponse.end buffer
-          return callback()
+        @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
+        ctx.proxyToClientResponse.end buffer
+        return callback()
 
       originalData = _.cloneDeep data
 
@@ -128,10 +132,16 @@ class PokemonGoMITM
           
           protoId = proto.split(/\./).pop().split(/Response/)[0]
 
-          if overwrite = @handleResponse protoId, decoded
-            unless _.isEqual overwrite, decoded
-              @log "[!] Overwriting "+protoId
-              data.returns[id] = POGOProtos.serialize overwrite, proto
+          originalResponse = _.cloneDeep decoded
+          afterHandlers = @handleResponse protoId, decoded
+          unless _.isEqual afterHandlers, originalResponse
+            @log "[!] Overwriting "+protoId
+            data.returns[id] = POGOProtos.serialize afterHandlers, proto
+
+          if injected and data.returns.length-injected-1 >= id
+            # Remove a previously injected request to not confuse the client
+            @log "[!] Removing #{protoId} from response as it was previously injected"
+            delete data.returns[id]
 
         else
           @log "[-] Response handler for #{requested[id]} isn't implemented yet.."
@@ -157,9 +167,7 @@ class PokemonGoMITM
     for handler in handlers
       data = handler(data, action) or data
 
-      return data
-
-    false
+    data
 
   handleResponse: (action, data) ->
     @log "[+] Response for action #{action}"
@@ -169,9 +177,7 @@ class PokemonGoMITM
     for handler in handlers
       data = handler(data, action) or data
 
-      return data
-
-    false
+    data
 
   injectRequest: (action, data) ->
     unless "POGOProtos.Networking.Requests.Messages.#{action}Message" in POGOProtos.info()
