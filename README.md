@@ -63,7 +63,7 @@ server.addResponseHandler "GetInventory", (data) ->
 				.then (data) ->
 					if data.result is "SUCCESS"
 						console.log "[+] Pokemon #{pokemon.pokemon_id} got released!"
-
+	false
 ```
 
 ## What's the status?
