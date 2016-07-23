@@ -18,5 +18,5 @@ server = new PokemonGoMITM port: 8081
 		false
 
 	.addResponseHandler "*", (data, action) ->
-		console.log "[->] Response for #{action} ", data, "\n" unless action in ignore
+		console.log "[->] Response for #{action} ", JSON.stringify(data, null, 4), "\n" unless action in ignore
 		false
