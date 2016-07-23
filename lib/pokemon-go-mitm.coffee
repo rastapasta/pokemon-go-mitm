@@ -12,9 +12,11 @@ _ = require 'lodash'
 request = require 'request'
 rp = require 'request-promise'
 Promise = require 'bluebird'
+DNS = require 'dns'
 
 class PokemonGoMITM
   endpoint: 'pgorelease.nianticlabs.com'
+  endpointIPs: []
 
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
@@ -45,8 +47,18 @@ class PokemonGoMITM
     console.log "[!] Make sure to have the CA cert .http-mitm-proxy/certs/ca.pem installed on your device"
 
   handleProxyConnect: (req, socket, head, callback) =>
-    req.url = @endpoint+':443' if req.url is '130.211.14.80:443'
-    callback()
+    if req.url.match /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:443/
+      ip = req.url.split(/:/)[0]
+
+      if endpointIPs.length
+        req.url = @endpoint+':443' if ip in @endpointIP
+        callback()
+
+      else
+        DNS.resolve @endpoint, "A", (err, addresses) ->
+          req.url = @endpoint+':443' if ip in @endpointIPs = addresses
+    else
+      callback()
 
   handleProxyRequest: (ctx, callback) =>
     # don't interfer with anything not going to the Pokemon API
