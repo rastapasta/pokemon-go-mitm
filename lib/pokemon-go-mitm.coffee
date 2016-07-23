@@ -14,6 +14,8 @@ rp = require 'request-promise'
 Promise = require 'bluebird'
 
 class PokemonGoMITM
+  endpoint: 'pgorelease.nianticlabs.com'
+
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
@@ -34,6 +36,7 @@ class PokemonGoMITM
   setupProxy: ->
     proxy = Proxy()
     proxy.use Proxy.gunzip
+    proxy.onConnect @handleProxyConnect
     proxy.onRequest @handleProxyRequest
     proxy.onError @handleProxyError
     proxy.listen port: @port
@@ -41,9 +44,13 @@ class PokemonGoMITM
     console.log "[+++] PokemonGo MITM Proxy listening on #{@port}"
     console.log "[!] Make sure to have the CA cert .http-mitm-proxy/certs/ca.pem installed on your device"
 
+  handleProxyConnect: (req, socket, head, callback) =>
+    req.url = @endpoint+':443' if req.url is '130.211.14.80:443'
+    callback()
+
   handleProxyRequest: (ctx, callback) =>
     # don't interfer with anything not going to the Pokemon API
-    return callback() unless ctx.clientToProxyRequest.headers.host is "pgorelease.nianticlabs.com"
+    return callback() unless ctx.clientToProxyRequest.headers.host is @endpoint
 
     @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
