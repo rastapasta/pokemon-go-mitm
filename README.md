@@ -46,6 +46,11 @@ server.addRequestHandler "CatchPokemon", (data) ->
 		data.normalized_hit_position = 1.0
 	data
 
+	server
+		.craftRequest "GetPlayer"
+		.then (data) ->
+			console.log data
+
 # Replace all PokeStops with kittys!
 server.addResponseHandler "FortDetails", (data) ->
 	data.name = "Pokemon GO MitM PoC"
@@ -58,9 +63,11 @@ server.addResponseHandler "GetInventory", (data) ->
 	for item in data.inventory_delta.inventory_items
 		if item.inventory_item_data and pokemon = item.inventory_item_data.pokemon_data
 
-			server.craftRequest "ReleasePokemon", pokemon_id: pokemon.id, (data) ->
-				if data.result is "SUCCESS"
-					console.log "[+] Pokemon #{pokemon.pokemon_id} got released!"
+			server
+				.craftRequest "ReleasePokemon", pokemon_id: pokemon.id
+				.then (data) ->
+					if data.result is "SUCCESS"
+						console.log "[+] Pokemon #{pokemon.pokemon_id} got released!"
 
 ```
 
