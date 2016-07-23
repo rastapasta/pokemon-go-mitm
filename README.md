@@ -46,11 +46,6 @@ server.addRequestHandler "CatchPokemon", (data) ->
 		data.normalized_hit_position = 1.0
 	data
 
-	server
-		.craftRequest "GetPlayer"
-		.then (data) ->
-			console.log data
-
 # Replace all PokeStops with kittys!
 server.addResponseHandler "FortDetails", (data) ->
 	data.name = "Pokemon GO MitM PoC"
