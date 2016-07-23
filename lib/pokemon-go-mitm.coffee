@@ -50,13 +50,15 @@ class PokemonGoMITM
     if req.url.match /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:443/
       ip = req.url.split(/:/)[0]
 
-      if endpointIPs.length
-        req.url = @endpoint+':443' if ip in @endpointIP
+      if @endpointIPs.length
+        req.url = @endpoint+':443' if ip in @endpointIPs
         callback()
 
       else
-        DNS.resolve @endpoint, "A", (err, addresses) ->
-          req.url = @endpoint+':443' if ip in @endpointIPs = addresses
+        DNS.resolve @endpoint, "A", (err, addresses) =>
+          @endpointIPs = addresses
+          req.url = @endpoint+':443' if ip in addresses
+          callback()
     else
       callback()
 
