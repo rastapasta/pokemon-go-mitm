@@ -38,29 +38,29 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
 	
-	# Replace all PokeStops with kittys!
-	.addResponseHandler "FortDetails", (data) ->
-		data.name = "Pokemon GO MitM PoC"
-		data.description = "meow!"
-		data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
-		data
+# Every throw you hit is a super-duper-curved ball -> +XP
+server.addRequestHandler "CatchPokemon", (data) ->
+	data.normalized_reticle_size = 1.950
+	data.spin_modifier = 0.850
+	if data.hit_pokemon
+		data.normalized_hit_position = 1.0
+	data
 
-	# Every throw you hit is a super-duper-curved ball -> +XP
-	.addRequestHandler "CatchPokemon", (data) ->
-		data.normalized_reticle_size = 1.950
-		data.spin_modifier = 0.850
-		if data.hit_pokemon
-			data.normalized_hit_position = 1.0
-		data
+# Replace all PokeStops with kittys!
+server.addResponseHandler "FortDetails", (data) ->
+	data.name = "Pokemon GO MitM PoC"
+	data.description = "meow!"
+	data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
+	data
 
-	# Catch all requests/reponses to log them
-	.addRequestHandler "*", (data, action) ->
-		console.log "[<-] Request for #{action} ", data
-		false
+# Send crafted requests directly to the API as a new request - to release a pokemon as example
+server.addResponseHandler "GetInventory", (data) ->
+	for item in data.inventory_delta.inventory_items
+		if item.inventory_item_data and pokemon = item.inventory_item_data.pokemon_data
 
-	.addResponseHandler "*", (data, action) ->
-		console.log "[->] Response for #{action} ", data
-		false
+			server.craftRequest "ReleasePokemon", pokemon_id: pokemon.id, (data) ->
+				if data.result is "SUCCESS"
+					console.log "[+] Pokemon #{pokemon.pokemon_id} got released!"
 
 ```
 
