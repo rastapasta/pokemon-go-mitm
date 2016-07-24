@@ -4,7 +4,7 @@
 ###
 
 Proxy = require 'http-mitm-proxy'
-POGOProtos = require 'pokemongo-protobuf'
+POGOProtos = require '../../pokemon-go-protobufjs-node' #'pokemongo-protobufjs'
 changeCase = require 'change-case'
 https = require 'https'
 fs = require 'fs'
@@ -18,8 +18,8 @@ class PokemonGoMITM
   endpoint: 'pgorelease.nianticlabs.com'
   endpointIPs: []
 
-  responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
-  requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+  responseEnvelope: POGOProtos.Networking.Envelopes.ResponseEnvelope
+  requestEnvelope: POGOProtos.Networking.Envelopes.RequestEnvelope
 
   requestHandlers: {}
   responseHandlers: {}
@@ -79,11 +79,12 @@ class PokemonGoMITM
     ctx.onRequestEnd (ctx, callback) =>
       buffer = Buffer.concat requestChunks
       try
-        data = POGOProtos.parse buffer, @requestEnvelope
+        data = @decode buffer, @requestEnvelope
       catch e
         @log "[-] Parsing protobuf of RequestEnvelope failed.."
         ctx.proxyToServerRequest.write buffer
         return callback()
+      console.log data
 
       @lastRequest = data
       @lastCtx = ctx
@@ -97,16 +98,17 @@ class PokemonGoMITM
         protoId = changeCase.pascalCase request.request_type
       
         # Queue the ProtoId for the response handling
-        requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
+        requested.push POGOProtos.Networking.Responses["#{protoId}Response"]
         
-        proto = "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
-        unless proto in POGOProtos.info()
+        proto = POGOProtos.Networking.Requests.Messages["#{protoId}Message"]
+
+        unless proto
           @log "[-] Request handler for #{protoId} isn't implemented yet.."
           continue
 
         try
           decoded = if request.request_message
-            POGOProtos.parse request.request_message, proto
+            @decode request.request_message, proto
           else {}
         catch e
           @log "[-] Parsing protobuf of #{protoId} failed.."
@@ -117,7 +119,7 @@ class PokemonGoMITM
 
         unless _.isEqual originalRequest, afterHandlers
           @log "[!] Overwriting "+protoId
-          request.request_message = POGOProtos.serialize afterHandlers, proto
+          request.request_message = @encode afterHandlers, proto
 
       for request in @requestInjectQueue
         unless data.requests.length < 5
@@ -127,16 +129,16 @@ class PokemonGoMITM
         @log "[+] Injecting request to #{request.action}"
         injected++
 
-        requested.push "POGOProtos.Networking.Responses.#{request.action}Response"
+        requested.push POGOProtos.Networking.Responses["#{request.action}Response"]
         data.requests.push
           request_type: changeCase.constantCase request.action
-          request_message: POGOProtos.serialize request.data, "POGOProtos.Networking.Requests.Messages.#{request.action}Message"
+          request_message: @encode request.data, POGOProtos.Networking.Requests.Messages["#{request.action}Message"]
 
       @requestInjectQueue = []
 
       unless _.isEqual originalData, data
         @log "[+] Recoding RequestEnvelope"
-        buffer = POGOProtos.serialize data, @requestEnvelope
+        buffer = @encode data, @requestEnvelope
 
       ctx.proxyToServerRequest.write buffer
 
@@ -152,12 +154,12 @@ class PokemonGoMITM
     ctx.onResponseEnd (ctx, callback) =>
       buffer = Buffer.concat responseChunks
       try
-        data = POGOProtos.parse buffer, @responseEnvelope
+        data = @decode buffer, @responseEnvelope
       catch e
         @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
         ctx.proxyToClientResponse.end buffer
         return callback()
-
+      console.log data
       originalData = _.cloneDeep data
 
       for handler in @responseEnvelopeHandlers
@@ -165,8 +167,8 @@ class PokemonGoMITM
 
       for id,response of data.returns
         proto = requested[id]
-        if proto in POGOProtos.info()
-          decoded = POGOProtos.parse response, proto
+        if proto
+          decoded = @decode response, proto
           
           protoId = proto.split(/\./).pop().split(/Response/)[0]
 
@@ -174,7 +176,7 @@ class PokemonGoMITM
           afterHandlers = @handleResponse protoId, decoded
           unless _.isEqual afterHandlers, originalResponse
             @log "[!] Overwriting "+protoId
-            data.returns[id] = POGOProtos.serialize afterHandlers, proto
+            data.returns[id] = @encode afterHandlers, proto
 
           if injected and data.returns.length-injected-1 >= id
             # Remove a previously injected request to not confuse the client
@@ -186,7 +188,7 @@ class PokemonGoMITM
 
       # Overwrite the response in case a hook hit the fan
       unless _.isEqual originalData, data
-        buffer = POGOProtos.serialize data, @responseEnvelope
+        buffer = @encode data, @responseEnvelope
 
       ctx.proxyToClientResponse.end buffer
       callback false
@@ -218,7 +220,7 @@ class PokemonGoMITM
     data
 
   injectRequest: (action, data) ->
-    unless "POGOProtos.Networking.Requests.Messages.#{action}Message" in POGOProtos.info()
+    unless POGOProtos.Networking.Requests.Messages["#{action}Message"]
       @log "[-] Can't inject request #{action} - proto not implemented"
       return
 
@@ -233,12 +235,12 @@ class PokemonGoMITM
 
     requestEnvelope.requests = [
       request_type: changeCase.constantCase action
-      request_message: POGOProtos.serialize data, "POGOProtos.Networking.Requests.Messages.#{changeCase.pascalCase action}Message"
+      request_message: @encode data, POGOProtos.Networking.Requests.Messages["#{changeCase.pascalCase action}Message"]
     ]
 
     _.defaults requestEnvelope, @lastRequest
 
-    buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+    buffer = @encode requestEnvelope, @requestEnvelope
     url ?= 'https://' + @lastCtx.clientToProxyRequest.headers.host + '/' + @lastCtx.clientToProxyRequest.url
 
     return rp(
@@ -256,8 +258,8 @@ class PokemonGoMITM
         try
           @log "[+] Response for crafted #{action}"
           
-          decoded = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
-          data = POGOProtos.parse decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
+          decoded = @decode buffer, @responseEnvelope
+          data = @decode decoded.returns[0], POGOProtos.Networking.Responses["#{changeCase.pascalCase action}Response"]
           
           @log data
           data
@@ -267,6 +269,14 @@ class PokemonGoMITM
       ).catch (e) =>
         @log "[-] Crafting a request failed with #{e}"
         throw e
+
+  encode: (data, proto) ->
+    obj = new proto data
+    obj.encode()
+
+  decode: (data, proto) ->
+    console.log proto
+    proto.decode data
 
   setResponseHandler: (action, cb) ->
     @addResponseHandler action, cb
