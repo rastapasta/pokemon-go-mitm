@@ -9,7 +9,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 * Get [nodejs](https://nodejs.org/en)
 * Get protobuf >= 3
   * Linux: libprotobuf must be present (`apt-get install libprotobuf-dev`)
-  * OSX: Use [homebrew](http://brew.sh/) to install `protobuf` with `brew install --devel protobuf`
+  * OSX: Use [homebrew](http://brew.sh/) to install `protobuf` with `brew install pkg-config` and `brew install --devel protobuf`
   * Windows: hard to compile - follow [advices](https://github.com/fuwaneko/node-protobuf#windows)
 
 * Clone the code to experiment with the examples! (otherwise use it as a [npm package](https://www.npmjs.com/package/pokemon-go-mitm))
