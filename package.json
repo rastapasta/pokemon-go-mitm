@@ -20,10 +20,11 @@
     "lodash": "^4.13.1",
     "pokemongo-protobuf": "^1.6.0",
     "request": "^2.73.0",
-    "request-promise": "^4.0.2"
+    "request-promise": "^4.0.2",
   },
   "devDependencies": {
     "geodesy": "^1.1.0",
-    "moment": "^2.14.1"
+    "moment": "^2.14.1",
+    "simple-s2-node": "git+https://github.com/billyriantono/simple-s2-node.git"
   }
 }
