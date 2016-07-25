@@ -30,19 +30,27 @@ class PokemonGoMITM
   lastRequest: null
   lastCtx: null
 
+  proxy: null
+
   constructor: (options) ->
     @port = options.port or 8081
     @debug = options.debug or false
     @setupProxy()
 
+  close: ->
+    console.log "[+] Stopping MITM Proxy..."
+    @proxy.close()
+
   setupProxy: ->
-    proxy = Proxy()
-    proxy.use Proxy.gunzip
-    proxy.onConnect @handleProxyConnect
-    proxy.onRequest @handleProxyRequest
-    proxy.onError @handleProxyError
-    proxy.listen port: @port
-    proxy.silent = true
+    @proxy = new Proxy()
+      .use Proxy.gunzip
+      .onConnect @handleProxyConnect
+      .onRequest @handleProxyRequest
+      .onError @handleProxyError
+      .listen port: @port
+
+    @proxy.silent = true
+
     console.log "[+++] PokemonGo MITM Proxy listening on #{@port}"
     console.log "[!] Make sure to have the CA cert .http-mitm-proxy/certs/ca.pem installed on your device"
 
