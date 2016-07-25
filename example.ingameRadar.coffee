@@ -28,14 +28,15 @@ server = new PokemonGoMITM port: 8081
 		seen = {}
 		addPokemon = (pokemon) ->
 			return if seen[hash = pokemon.spawnpoint_id + ":" + pokemon.pokemon_data.pokemon_id]
-			return if pokemon.expiration_timestamp_ms < 0
+			return if pokemon.time_till_hidden_ms < 0
 
 			seen[hash] = true
+			console.log "new wild pokemon", pokemon
 			pokemons.push
 				type: pokemon.pokemon_data.pokemon_id
 				latitude: pokemon.latitude
 				longitude: pokemon.longitude
-				expirationMs: pokemon.expiration_timestamp_ms
+				expirationMs: Date.now() + pokemon.time_till_hidden_ms
 				data: pokemon.pokemon_data
 
 		for cell in data.map_cells
@@ -48,34 +49,36 @@ server = new PokemonGoMITM port: 8081
 		console.log "fetched fort request", data
 		info = ""
 
+		# Populate some neat info about the pokemon's whereabouts
+		pokemonInfo = (pokemon) ->
+			name = changeCase.titleCase pokemon.data.pokemon_id
+
+			position = new LatLon pokemon.latitude, pokemon.longitude
+			expires = moment(Number(pokemon.expirationMs)).fromNow()
+			distance = Math.floor currentLocation.distanceTo position
+			bearing = currentLocation.bearingTo position
+			direction = switch true
+				when bearing>330 then "↑"
+				when bearing>285 then "↖"
+				when bearing>240 then "←"
+				when bearing>195 then "↙"
+				when bearing>150 then "↓"
+				when bearing>105 then "↘"
+				when bearing>60 then "→"
+				when bearing>15 then "↗"
+				else "↑"
+
+			"#{name} #{direction} #{distance}m expires #{expires}"
+
 		for modifier in data.modifiers
 			if modifier.item_id is 'ITEM_TROY_DISK'
-				info += "Lock expires "+moment(data.modifiers[0].expirationMs).toNow()+"\n"
+				expires = moment(Number(modifier.expiration_timestamp_ms)).fromNow()
+				info += "Lure by #{modifier.deployer_player_codename} expires #{expires}\n"
 
 		info += if pokemons.length
 			(pokemonInfo(pokemon) for pokemon in pokemons).join "\n"
 		else
-			"No wild pokemons nearby... yet!"
+			"No wild Pokémon near you..."
 
 		data.description = info
 		data
-
-# Populate some neat info about the pokemon's whereabouts 
-pokemonInfo = (pokemon) ->
-	console.log pokemon
-	name = changeCase.titleCase pokemon.data.pokemon_id
-	position = new LatLon pokemon.latitude, pokemon.longitude
-	distance = Math.floor currentLocation.distanceTo position
-	bearing = currentLocation.bearingTo position
-	direction = switch true
-		when bearing>330 then "N"
-		when bearing>285 then "NW"
-		when bearing>240 then "W"
-		when bearing>195 then "SW"
-		when bearing>150 then "S"
-		when bearing>105 then "SE"
-		when bearing>60 then "E"
-		when bearing>15 then "NE"
-		else "N"
-
-	"#{name} in #{distance}m -> #{direction}"
