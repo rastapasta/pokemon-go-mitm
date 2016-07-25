@@ -140,7 +140,7 @@ class PokemonGoMITM
           request_type: changeCase.constantCase request.action
           request_message: POGOProtos.serialize request.data, "POGOProtos.Networking.Requests.Messages.#{request.action}Message"
 
-      @requestInjectQueue = []
+      @requestInjectQueue = @requestInjectQueue.slice injected
 
       unless _.isEqual originalData, data
         @log "[+] Recoding RequestEnvelope"
