@@ -84,7 +84,6 @@ class PokemonGoMITM
         @log "[-] Parsing protobuf of RequestEnvelope failed.."
         ctx.proxyToServerRequest.write buffer
         return callback()
-      console.log data
 
       @lastRequest = data
       @lastCtx = ctx
@@ -98,7 +97,7 @@ class PokemonGoMITM
         protoId = changeCase.pascalCase request.request_type
       
         # Queue the ProtoId for the response handling
-        requested.push POGOProtos.Networking.Responses["#{protoId}Response"]
+        requested.push protoId
         
         proto = POGOProtos.Networking.Requests.Messages["#{protoId}Message"]
 
@@ -129,16 +128,16 @@ class PokemonGoMITM
         @log "[+] Injecting request to #{request.action}"
         injected++
 
-        requested.push POGOProtos.Networking.Responses["#{request.action}Response"]
+        requested.push request.action
         data.requests.push
           request_type: changeCase.constantCase request.action
           request_message: @encode request.data, POGOProtos.Networking.Requests.Messages["#{request.action}Message"]
 
       @requestInjectQueue = []
 
-      unless _.isEqual originalData, data
-        @log "[+] Recoding RequestEnvelope"
-        buffer = @encode data, @requestEnvelope
+      # unless _.isEqual originalData, data
+      #   @log "[+] Recoding RequestEnvelope"
+      #   buffer = @encode data, @requestEnvelope
 
       ctx.proxyToServerRequest.write buffer
 
@@ -159,19 +158,18 @@ class PokemonGoMITM
         @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
         ctx.proxyToClientResponse.end buffer
         return callback()
-      console.log data
-      originalData = _.cloneDeep data
+     
+      originalData = JSON.stringify data
 
       for handler in @responseEnvelopeHandlers
         data = handler(data, {}) or data
 
       for id,response of data.returns
-        proto = requested[id]
+        protoId = requested[id]
+        proto = POGOProtos.Networking.Responses["#{protoId}Response"]
         if proto
           decoded = @decode response, proto
           
-          protoId = proto.split(/\./).pop().split(/Response/)[0]
-
           originalResponse = _.cloneDeep decoded
           afterHandlers = @handleResponse protoId, decoded
           unless _.isEqual afterHandlers, originalResponse
@@ -187,7 +185,9 @@ class PokemonGoMITM
           @log "[-] Response handler for #{requested[id]} isn't implemented yet.."
 
       # Overwrite the response in case a hook hit the fan
-      unless _.isEqual originalData, data
+      console.log data
+      unless originalData is JSON.stringify data
+        @log "[+] Recoding ResponseEnvelope"
         buffer = @encode data, @responseEnvelope
 
       ctx.proxyToClientResponse.end buffer
@@ -272,10 +272,9 @@ class PokemonGoMITM
 
   encode: (data, proto) ->
     obj = new proto data
-    obj.encode()
+    obj.encode().buffer
 
   decode: (data, proto) ->
-    console.log proto
     proto.decode data
 
   setResponseHandler: (action, cb) ->
