@@ -28,21 +28,21 @@ server = new PokemonGoMITM port: 8081
   .addRequestHandler "*", (data, action) ->
     if currentLocation and forts
       for fort in forts
-        if fort.type is 'CHECKPOINT' and (new Date() - fort.last_modified_timestamp_ms) >= 300000
-          position = new LatLon fort.latitude, fort.longitude
-          distance = Math.floor currentLocation.distanceTo position
-          fort.last_modified_timestamp_ms = new Date()
-          if distance < 30
-            console.log "[->] FortSearch"
-            server.craftRequest "FortSearch",
-              {
-                fort_id: fort.id,
-                fort_latitude: fort.latitude,
-                fort_longitude: fort.longitude,
-                player_latitude: fort.latitude,
-                player_longitude: fort.longitude
-              }
-            .then (data) ->
-              if data.result is 'SUCCESS'
-                console.log "[<-] Items rewarded: ", data.items_awarded
+        if fort.type is 'CHECKPOINT'
+          if not fort.cooldown_complete_timestamp_ms or (parseFloat(new Date().getTime()) - (parseFloat(fort.cooldown_complete_timestamp_ms)-(3600*2*1000))) >= 300000
+            position = new LatLon fort.latitude, fort.longitude
+            distance = Math.floor currentLocation.distanceTo position
+            fort.cooldown_complete_timestamp_ms = new Date().getTime().toString();
+            if distance < 30
+              server.craftRequest "FortSearch",
+                {
+                  fort_id: fort.id,
+                  fort_latitude: fort.latitude,
+                  fort_longitude: fort.longitude,
+                  player_latitude: fort.latitude,
+                  player_longitude: fort.longitude
+                }
+              .then (data) ->
+                if data.result is 'SUCCESS'
+                  console.log "[<-] Items awarded:", data.items_awarded
     false
