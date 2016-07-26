@@ -70,12 +70,29 @@ server = new PokemonGoMITM port: 8081
 
 			"#{name} #{direction} #{distance}m expires #{expires}"
 
+		# Create map marker for pokemon location
+		pokemonMarker = (pokemon) ->
+			label = pokemon.data.pokemon_id.charAt(0)
+			icon = changeCase.paramCase pokemon.data.pokemon_id
+			marker = "label:#{label}%7Cicon:http://raw.github.com/msikma/pokesprite/master/icons/pokemon/regular/#{icon}.png"
+
+			"&markers=#{marker}%7C#{pokemon.latitude},#{pokemon.longitude}"
+
 		for modifier in data.modifiers
 			if modifier.item_id is 'ITEM_TROY_DISK'
 				expires = moment(Number(modifier.expiration_timestamp_ms)).fromNow()
 				info += "Lure by #{modifier.deployer_player_codename} expires #{expires}\n"
 
-		info += if pokemons.length
+		if currentLocation
+			loc = "#{currentLocation.lat},#{currentLocation.lon}"
+			img = "http://maps.googleapis.com/maps/api/staticmap?center=#{loc}&zoom=17&size=384x512&markers=color:blue%7Csize:tiny%7C#{loc}"
+
+			if pokemons.length
+				img += (pokemonMarker(pokemon) for pokemon in pokemons).join ""
+
+			data.image_urls.unshift img
+
+		info += if pokemons.length and currentLocation
 			(pokemonInfo(pokemon) for pokemon in pokemons).join "\n"
 		else
 			"No wild Pokémon near you..."
