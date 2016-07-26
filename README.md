@@ -1,6 +1,7 @@
 # pokemon-go-mitm-node
 [![npm version](https://badge.fury.io/js/pokemon-go-mitm.svg)](https://badge.fury.io/js/pokemon-go-mitm)
 ![dependencies](https://david-dm.org/rastapasta/pokemon-go-mitm-node.svg)
+![license](https://img.shields.io/github/license/rastapasta/pokemon-go-mitm-node.svg)
 
 Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and their servers, decodes the protocol and gives you a handy tool to enrich your own game experience by altering the data on the fly.
 
