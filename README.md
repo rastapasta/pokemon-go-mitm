@@ -23,21 +23,30 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 
 * Clone the code to experiment with the examples! (otherwise use it as a [npm package](https://www.npmjs.com/package/pokemon-go-mitm))
 
-`git clone https://github.com/rastapasta/pokemon-go-mitm-node.git && cd pokemon-go-mitm-node`
+  `git clone https://github.com/rastapasta/pokemon-go-mitm-node.git && cd pokemon-go-mitm-node`
 
-`npm install`
+  `npm install`
 
 * Setup the [CoffeeScript](http://coffeescript.org/) interpreter
+  `npm install -g coffee-script`
 
-`npm install -g coffee-script`
+* Prepare your phone to accept the MITM certificate
 
+  * If you are using Pokemon > version 0.30
 
-* Run and quit one of the examples once to get a CA certificate generated
+    * Android
+      * on a rooted phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
+      * otherwise: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm-node/issues/69#issuecomment-236424792)
 
-`coffee example.logTraffic.coffee`
+    * iPhone
+      * downgrade!
 
-* Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
-* Add it to the "trusted certificates"
+  * If you are using Pokemon < version 0.30
+
+    * Run and quit `coffee example.logTraffic.coffee` to generate a CA certificate
+    * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
+    * Add it to the "trusted certificates"
+
 * Setup your connection to use your machine as a proxy (default port is 8081)
 * Enjoy :)
 
