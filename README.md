@@ -39,13 +39,12 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
       * otherwise: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm-node/issues/69#issuecomment-236424792)
 
     * iPhone
-      * downgrade!
+      * on a jailbroken phone: use [ilendemli](https://github.com/ilendemli)'s nice [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
+      * otherwise: downgrade.
 
-  * If you are using Pokemon < version 0.30
-
-    * Run and quit `coffee example.logTraffic.coffee` to generate a CA certificate
-    * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
-    * Add it to the "trusted certificates"
+  * Run and quit `coffee example.logTraffic.coffee` to generate a CA certificate
+  * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
+  * Add it to the "trusted certificates"
 
 * Setup your connection to use your machine as a proxy (default port is 8081)
 * Enjoy :)
