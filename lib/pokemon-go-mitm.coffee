@@ -82,7 +82,6 @@ class PokemonGoMITM
       ctx.onRequestData (ctx, chunk, callback) =>
         requestChunks.push chunk
         callback null, null
-        false
 
       ctx.onRequestEnd (ctx, callback) =>
         buffer = Buffer.concat requestChunks
