@@ -18,6 +18,9 @@ class PokemonGoMITM
   endpoint: 'pgorelease.nianticlabs.com'
   endpointIPs: []
 
+  gpoauth_endpoint: 'android.clients.google.com'
+  pgo_client_sig: '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
+
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
 
@@ -71,6 +74,25 @@ class PokemonGoMITM
       callback()
 
   handleProxyRequest: (ctx, callback) =>
+
+    # handler for fixing google signature
+    if ctx.clientToProxyRequest.headers.host == @gpoauth_endpoint
+      requestChunks = []
+
+      ctx.onRequestData (ctx, chunk, callback) =>
+        requestChunks.push chunk
+        callback null, null
+
+      ctx.onRequestEnd (ctx, callback) =>
+        buffer = Buffer.concat requestChunks
+        if /Email.*com.nianticlabs.pokemongo/.test(buffer.toString())
+          temp = buffer.toString()
+          temp = temp.replace(/&client_sig=[^&]*&/,'&client_sig='+@pgo_client_sig+'&')
+          buffer = new Buffer(temp)
+        ctx.proxyToServerRequest.write buffer
+        return callback()
+      return callback()
+
     # don't interfer with anything not going to the Pokemon API
     return callback() unless ctx.clientToProxyRequest.headers.host is @endpoint
 
