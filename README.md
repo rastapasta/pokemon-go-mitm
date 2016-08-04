@@ -54,14 +54,6 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 ```coffeescript
 PokemonGoMITM = require './lib/pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
-	
-# Every throw you hit is a super-duper-curved ball -> +XP
-server.addRequestHandler "CatchPokemon", (data) ->
-	data.normalized_reticle_size = 1.950
-	data.spin_modifier = 0.850
-	if data.hit_pokemon
-		data.normalized_hit_position = 1.0
-	data
 
 # Replace all PokeStops with kittys!
 server.addResponseHandler "FortDetails", (data) ->
@@ -70,17 +62,6 @@ server.addResponseHandler "FortDetails", (data) ->
 	data.image_urls = ["http://thecatapi.com/api/images/get?format=src&type=png"]
 	data
 
-# Send crafted requests directly to the API as a new request - to release a pokemon as example
-server.addResponseHandler "GetInventory", (data) ->
-	for item in data.inventory_delta.inventory_items
-		if item.inventory_item_data and pokemon = item.inventory_item_data.pokemon_data
-
-			server
-				.craftRequest "ReleasePokemon", pokemon_id: pokemon.id
-				.then (data) ->
-					if data.result is "SUCCESS"
-						console.log "[+] Pokemon #{pokemon.pokemon_id} got released!"
-	false
 ```
 
 ## What's the status?
