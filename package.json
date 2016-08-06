@@ -19,7 +19,7 @@
     "coffee-script": "^1.10.0",
     "http-mitm-proxy": "git+https://github.com/joeferner/node-http-mitm-proxy.git",
     "lodash": "^4.13.1",
-    "pokemongo-protobuf": "^1.8.0",
+    "pokemongo-protobuf": "^1.9.0",
     "request": "^2.73.0",
     "request-promise": "^4.0.2"
   },
