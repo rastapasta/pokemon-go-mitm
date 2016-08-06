@@ -4,7 +4,7 @@
 ![license](https://img.shields.io/github/license/rastapasta/pokemon-go-mitm-node.svg)
 
 ***IMPORTANT:***
-Niantic introduced certificate pinning in the most recent version of the app. Either downgrade to [0.29.3](https://www.apkmirror.com/apk/niantic-inc/pokemon-go/pokemon-go-0-29-3-release/) or root your phone and use [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed) to make it work again like smooth whipped cream!
+Niantic introduced certificate pinning in the most recent version of the app. Either ~~downgrade to [0.29.3](https://www.apkmirror.com/apk/niantic-inc/pokemon-go/pokemon-go-0-29-3-release/)~~ (Niantic is blocking 0.29.3 now) or root your phone and use [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed) to make it work again like smooth whipped cream!
 
 Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and their servers, decodes the protocol and gives you a handy tool to enrich your own game experience by altering the data on the fly.
 
