@@ -69,7 +69,7 @@ class PokemonGoMITM
       .onError @handleProxyError
       .listen port: @port
 
-    @proxy.silent = false
+    @proxy.silent = true
 
     console.log "[+++] PokemonGo MITM Proxy listening on #{@port}"
     console.log "[!] Make sure to have the CA cert .http-mitm-proxy/certs/ca.pem installed on your device"
