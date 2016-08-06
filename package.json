@@ -4,6 +4,7 @@
   "description": "Pokemon Go MITM proxy",
   "main": "index.js",
   "scripts": {
+    "start": "coffee example.logTraffic.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
