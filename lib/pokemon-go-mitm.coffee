@@ -15,11 +15,13 @@ Promise = require 'bluebird'
 DNS = require 'dns'
 
 class PokemonGoMITM
-  endpoint: 'pgorelease.nianticlabs.com'
-  endpointIPs: []
+  endpoint:
+    api: 'pgorelease.nianticlabs.com'
+    oauth: 'android.clients.google.com'
 
-  gpoauth_endpoint: 'android.clients.google.com'
-  pgo_client_sig: '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
+  endpointIPs: {}
+
+  clientSignature: '321187995bc7cdc2b5fc91b11a96e2baa8602c62'
 
   responseEnvelope: 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
   requestEnvelope: 'POGOProtos.Networking.Envelopes.RequestEnvelope'
@@ -38,11 +40,26 @@ class PokemonGoMITM
   constructor: (options) ->
     @port = options.port or 8081
     @debug = options.debug or false
-    @setupProxy()
+
+    @resolveEndpoints()
+    .then @setupProxy()
 
   close: ->
     console.log "[+] Stopping MITM Proxy..."
     @proxy.close()
+
+  resolveEndpoints: ->
+    Promise
+    .mapSeries (host for name, host of @endpoint), (endpoint) =>
+      new Promise (resolve, reject) =>
+        @log "[+] Resolving #{endpoint}"
+        DNS.resolve endpoint, "A", (err, addresses) =>
+          return reject err if err
+          @endpointIPs[ip] = endpoint for ip in addresses
+          resolve()
+    .then =>
+      @log "[+] Resolving done", @endpointIPs
+
 
   setupProxy: ->
     @proxy = new Proxy()
@@ -52,50 +69,31 @@ class PokemonGoMITM
       .onError @handleProxyError
       .listen port: @port
 
-    @proxy.silent = true
+    @proxy.silent = false
 
     console.log "[+++] PokemonGo MITM Proxy listening on #{@port}"
     console.log "[!] Make sure to have the CA cert .http-mitm-proxy/certs/ca.pem installed on your device"
 
   handleProxyConnect: (req, socket, head, callback) =>
-    if req.url.match /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:443/
-      ip = req.url.split(/:/)[0]
+    return callback() unless req.url.match /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:443/
+    ip = req.url.split(/:/)[0]
 
-      if @endpointIPs.length
-        req.url = @endpoint+':443' if ip in @endpointIPs
-        callback()
+    # Overwrite the request URL if the IP matches on of our intercepted hosts
+    req.url = @endpointIPs[ip]+':443' if @endpointIPs[ip]
 
-      else
-        DNS.resolve @endpoint, "A", (err, addresses) =>
-          @endpointIPs = addresses
-          req.url = @endpoint+':443' if ip in addresses
-          callback()
-    else
-      callback()
+    callback()
 
   handleProxyRequest: (ctx, callback) =>
+    switch ctx.clientToProxyRequest.headers.host
+      # Intercept all calls to the API
+      when @endpoint.api then @proxyRequestHandler ctx
 
-    # handler for fixing google signature
-    if ctx.clientToProxyRequest.headers.host == @gpoauth_endpoint
-      requestChunks = []
+      # Intercept calls to the oAuth endpoint to patch the signature
+      when @endpoint.oauth then @proxySignatureHandler ctx
+    
+    callback()
 
-      ctx.onRequestData (ctx, chunk, callback) =>
-        requestChunks.push chunk
-        callback null, null
-
-      ctx.onRequestEnd (ctx, callback) =>
-        buffer = Buffer.concat requestChunks
-        if /Email.*com.nianticlabs.pokemongo/.test(buffer.toString())
-          temp = buffer.toString()
-          temp = temp.replace(/&client_sig=[^&]*&/,'&client_sig='+@pgo_client_sig+'&')
-          buffer = new Buffer(temp)
-        ctx.proxyToServerRequest.write buffer
-        return callback()
-      return callback()
-
-    # don't interfer with anything not going to the Pokemon API
-    return callback() unless ctx.clientToProxyRequest.headers.host is @endpoint
-
+  proxyRequestHandler: (ctx) ->
     @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
@@ -221,7 +219,22 @@ class PokemonGoMITM
       ctx.proxyToClientResponse.end buffer
       callback false
 
-    callback()
+
+  proxySignatureHandler: (ctx) ->
+    requestChunks = []
+
+    ctx.onRequestData (ctx, chunk, callback) =>
+      requestChunks.push chunk
+      callback null, null
+
+    ctx.onRequestEnd (ctx, callback) =>
+      buffer = Buffer.concat requestChunks
+      if /Email.*com.nianticlabs.pokemongo/.test buffer.toString()
+        temp = buffer.toString()
+        temp = temp.replace(/&client_sig=[^&]*&/,'&client_sig='+@pgo_client_sig+'&')
+        buffer = new Buffer(temp)
+      ctx.proxyToServerRequest.write buffer
+      callback()
 
   handleProxyError: (ctx, err, errorKind) =>
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
@@ -268,11 +281,10 @@ class PokemonGoMITM
 
     _.defaults requestEnvelope, @lastRequest
 
-    buffer = POGOProtos.serialize requestEnvelope, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+    buffer = POGOProtos.serialize requestEnvelope, @requestEnvelope
     url ?= 'https://' + @lastCtx.clientToProxyRequest.headers.host + '/' + @lastCtx.clientToProxyRequest.url
 
     return rp(
-      hostname: @lastCtx.clientToProxyRequest.headers.host
       url: url
       method: 'POST'
       body: buffer
@@ -286,7 +298,7 @@ class PokemonGoMITM
         try
           @log "[+] Response for crafted #{action}"
           
-          decoded = POGOProtos.parse buffer, "POGOProtos.Networking.Envelopes.ResponseEnvelope"
+          decoded = POGOProtos.parse buffer, @responseEnvelope
           data = POGOProtos.parse decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
           
           @log data
