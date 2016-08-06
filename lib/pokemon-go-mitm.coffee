@@ -336,6 +336,6 @@ class PokemonGoMITM
     this
 
   log: (text) ->
-    g text if @debug
+    console.log text if @debug
 
 module.exports = PokemonGoMITM
