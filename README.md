@@ -27,7 +27,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 
   `npm install`
 
-* Setup the [CoffeeScript](http://coffeescript.org/) interpreter
+* Setup the [CoffeeScript](http://coffeescript.org/) interpreter (optional if using `npm` scripts)
   `npm install -g coffee-script`
 
 * Prepare your phone to accept the MITM certificate
@@ -42,7 +42,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
       * on a jailbroken phone: use [ilendemli](https://github.com/ilendemli)'s nice [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
       * otherwise: downgrade.
 
-  * Run and quit `coffee example.logTraffic.coffee` to generate a CA certificate
+  * Run and quit `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
   * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
   * Add it to the "trusted certificates"
 
