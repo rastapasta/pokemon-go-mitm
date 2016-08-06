@@ -141,7 +141,7 @@ class PokemonGoMITM
           continue
         
         originalRequest = _.cloneDeep decoded
-        afterHandlers = @handleRequest protoId, decoded
+        afterHandlers = @handleRequest protoId, decoded, ctx
 
         unless _.isEqual originalRequest, afterHandlers
           @log "[!] Overwriting "+protoId
@@ -199,7 +199,7 @@ class PokemonGoMITM
           protoId = proto.split(/\./).pop().split(/Response/)[0]
 
           originalResponse = _.cloneDeep decoded
-          afterHandlers = @handleResponse protoId, decoded
+          afterHandlers = @handleResponse protoId, decoded, ctx
           unless _.isEqual afterHandlers, originalResponse
             @log "[!] Overwriting "+protoId
             data.returns[id] = POGOProtos.serialize afterHandlers, proto
@@ -230,9 +230,8 @@ class PokemonGoMITM
     ctx.onRequestEnd (ctx, callback) =>
       buffer = Buffer.concat requestChunks
       if /Email.*com.nianticlabs.pokemongo/.test buffer.toString()
-        temp = buffer.toString()
-        temp = temp.replace(/&client_sig=[^&]*&/,'&client_sig='+@pgo_client_sig+'&')
-        buffer = new Buffer(temp)
+        buffer = new Buffer buffer.toString().replace /&client_sig=[^&]*&/, "&client_sig=#{@clientSignature}&"
+
       ctx.proxyToServerRequest.write buffer
       callback()
 
@@ -240,23 +239,23 @@ class PokemonGoMITM
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
     @log '[-] ' + errorKind + ' on ' + url + ':', err
 
-  handleRequest: (action, data) ->
+  handleRequest: (action, data, ctx) ->
     @log "[+] Request for action #{action}: "
     @log data if data
 
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     for handler in handlers
-      data = handler(data, action) or data
+      data = handler(data, action, ctx) or data
 
     data
 
-  handleResponse: (action, data) ->
+  handleResponse: (action, data, ctx) ->
     @log "[+] Response for action #{action}"
     @log data if data
 
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     for handler in handlers
-      data = handler(data, action) or data
+      data = handler(data, action, ctx) or data
 
     data
 
@@ -337,6 +336,6 @@ class PokemonGoMITM
     this
 
   log: (text) ->
-    console.log text if @debug
+    g text if @debug
 
 module.exports = PokemonGoMITM
