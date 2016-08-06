@@ -10,7 +10,7 @@ Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and t
 
 Take a look at the **examples** to get started. Feel happily invited to contribute more!
 
-<img width="22%" src="https://files.slack.com/files-pri/T1R4G4SH1-F1SL5TJSD/9a257af3-0c76-4fe4-b396-3cc6b7ed4a29.jpg?pub_secret=8d2362ba2e" /> <img src="https://camo.githubusercontent.com/f53cc9cd861a7b9feb516df352d51bdc0f58c9c6/68747470733a2f2f692e696d6775722e636f6d2f476d61696872502e706e67" height="341""> <img width="22%" src="https://i.imgur.com/lkErths.png" /> <img width="22%" src="https://i.imgur.com/XaEcgsQ.jpg">
+<img width="22%" src="https://files.slack.com/files-pri/T1R4G4SH1-F1SL5TJSD/9a257af3-0c76-4fe4-b396-3cc6b7ed4a29.jpg?pub_secret=8d2362ba2e" /> <img src="https://camo.githubusercontent.com/f53cc9cd861a7b9feb516df352d51bdc0f58c9c6/68747470733a2f2f692e696d6775722e636f6d2f476d61696872502e706e67" height="341"> <img width="22%" src="https://i.imgur.com/lkErths.png" /> <img width="22%" src="https://i.imgur.com/XaEcgsQ.jpg">
 
 
 
