@@ -43,15 +43,28 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
       * otherwise: downgrade.
 
   * Run and quit `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
-  * On very few systems (Raspberry Pi) and for Android N as a target system, the certificate has to be generated manually:
+  * On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
 
     ```
     openssl genrsa -out .http-mitm-proxy/keys/ca.private.key 2048
     openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
     openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
     ```
-  * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile or mail it to yourself
-  * Add it to the "trusted certificates"
+  
+  * Install the generated certificate
+
+    * All systems (besides Android N)
+      * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
+
+    * Android N
+      * Convert the CA certificate
+      ```
+      openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
+      ```
+      * Copy the generated `ca.crt` to your mobile
+
+
+  * Add the certificate to the "trusted certificates" of your mobile
 
 * Setup your connection to use your machine as a proxy (default port is 8081)
 * Enjoy :)
