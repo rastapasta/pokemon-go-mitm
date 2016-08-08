@@ -108,7 +108,7 @@ class PokemonGoMITM
     ctx.onRequestEnd (ctx, callback) =>
       buffer = Buffer.concat requestChunks
       try
-        data = POGOProtos.parse buffer, @requestEnvelope
+        data = POGOProtos.parseWithUnknown buffer, @requestEnvelope
       catch e
         @log "[-] Parsing protobuf of RequestEnvelope failed.."
         ctx.proxyToServerRequest.write buffer
@@ -135,7 +135,7 @@ class PokemonGoMITM
 
         try
           decoded = if request.request_message
-            POGOProtos.parse request.request_message, proto
+            POGOProtos.parseWithUnknown request.request_message, proto
           else {}
         catch e
           @log "[-] Parsing protobuf of #{protoId} failed.."
@@ -181,7 +181,7 @@ class PokemonGoMITM
     ctx.onResponseEnd (ctx, callback) =>
       buffer = Buffer.concat responseChunks
       try
-        data = POGOProtos.parse buffer, @responseEnvelope
+        data = POGOProtos.parseWithUnknown buffer, @responseEnvelope
       catch e
         @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
         ctx.proxyToClientResponse.end buffer
@@ -195,7 +195,7 @@ class PokemonGoMITM
       for id,response of data.returns
         proto = requested[id]
         if proto in POGOProtos.info()
-          decoded = POGOProtos.parse response, proto
+          decoded = POGOProtos.parseWithUnknown response, proto
           
           protoId = proto.split(/\./).pop().split(/Response/)[0]
 
@@ -298,8 +298,8 @@ class PokemonGoMITM
         try
           @log "[+] Response for crafted #{action}"
           
-          decoded = POGOProtos.parse buffer, @responseEnvelope
-          data = POGOProtos.parse decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
+          decoded = POGOProtos.parseWithUnknown buffer, @responseEnvelope
+          data = POGOProtos.parseWithUnknown decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
           
           @log data
           data
