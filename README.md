@@ -4,7 +4,6 @@
 ![license](https://img.shields.io/github/license/rastapasta/pokemon-go-mitm-node.svg)
 
 ***IMPORTANT:***
-Niantic introduced certificate pinning in the most recent version of the app. Either ~~downgrade to [0.29.3](https://www.apkmirror.com/apk/niantic-inc/pokemon-go/pokemon-go-0-29-3-release/)~~ (Niantic is blocking 0.29.3 now) or root your phone and use [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed) to make it work again like smooth whipped cream!
 
 Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and their servers, decodes the protocol and gives you a handy tool to enrich your own game experience by altering the data on the fly.
 
@@ -32,16 +31,13 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 
 * Prepare your phone to accept the MITM certificate
 
-  * If you are using Pokemon > version 0.30
-
     * Android
-      * on a rooted phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
-      * otherwise: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm-node/issues/69#issuecomment-236424792)
+      * on a **rooted** phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
+      * **otherwise**: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm-node/issues/69#issuecomment-236424792)
 
     * iPhone
-      * on a jailbroken phone: use [ilendemli](https://github.com/ilendemli)'s nice [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
-      * otherwise: downgrade.
-
+      * you have to be **jailbroken** to use [ilendemli](https://github.com/ilendemli)'s nice certificate pinning [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
+      
 * Generate a CA MITM certificate
 
   * Run and quit `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
