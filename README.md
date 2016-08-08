@@ -42,6 +42,8 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
       * on a jailbroken phone: use [ilendemli](https://github.com/ilendemli)'s nice [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
       * otherwise: downgrade.
 
+* Generate a CA MITM certificate
+
   * Run and quit `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
   * On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
 
@@ -50,23 +52,22 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
     openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
     openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
     ```
-  
-  * Install the generated certificate
 
-    * All systems (besides Android N)
-      * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
+* Install the generated certificate on your mobile
 
-    * Android N
-      * Convert the CA certificate
-      ```
-      openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
-      ```
-      * Copy the generated `ca.crt` to your mobile
+  * All systems (besides Android N)
+    * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
 
+  * Android N
+    * Convert the CA certificate
+    ```
+    openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
+    ```
+    * Copy the generated `ca.crt` to your mobile
 
   * Add the certificate to the "trusted certificates" of your mobile
 
-* Setup your connection to use your machine as a proxy (default port is 8081)
+* Setup your mobile's connection to use your machine as a proxy (default port is 8081)
 * Enjoy :)
 
 ## How to code it?
