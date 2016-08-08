@@ -18,6 +18,7 @@ class PokemonGoMITM
   endpoint:
     api: 'pgorelease.nianticlabs.com'
     oauth: 'android.clients.google.com'
+    ptc: 'sso.pokemon.com'
     storage: 'storage.googleapis.com'
 
   endpointIPs: {}
