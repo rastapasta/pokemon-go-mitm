@@ -3,8 +3,6 @@
 ![dependencies](https://david-dm.org/rastapasta/pokemon-go-mitm-node.svg)
 ![license](https://img.shields.io/github/license/rastapasta/pokemon-go-mitm-node.svg)
 
-***IMPORTANT:***
-
 Pokemon Go MITM Proxy - Intercepts the traffic between your Pokemon Go App and their servers, decodes the protocol and gives you a handy tool to enrich your own game experience by altering the data on the fly.
 
 Take a look at the **examples** to get started. Feel happily invited to contribute more!
