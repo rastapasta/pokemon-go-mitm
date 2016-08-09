@@ -31,7 +31,7 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 
     * Android
       * on a **rooted** phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
-      * **otherwise**: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm-node/issues/69#issuecomment-236424792)
+      * **otherwise**: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm/issues/69#issuecomment-238457389)
 
     * iPhone
       * you have to be **jailbroken** to use [ilendemli](https://github.com/ilendemli)'s nice certificate pinning [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
