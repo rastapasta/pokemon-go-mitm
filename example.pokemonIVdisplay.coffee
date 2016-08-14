@@ -10,9 +10,9 @@ changeCase = require 'change-case'
 
 server = new PokemonGoMITM port: 8081
 	# Always get the full inventory
-	.addRequestHandler "GetInventory", (data) ->
-		data.last_timestamp_ms = 0
-		data
+	#.addRequestHandler "GetInventory", (data) ->
+	#	data.last_timestamp_ms = 0
+	#	data
 
 	# Append IV% to existing Pokémon names
 	.addResponseHandler "GetInventory", (data) ->
