@@ -20,13 +20,13 @@
     "http-mitm-proxy": "git+https://github.com/joeferner/node-http-mitm-proxy.git",
     "lodash": "^4.13.1",
     "pokemongo-protobuf": "^1.10.0",
+    "raw-body": "^2.1.7",
     "request": "^2.73.0",
     "request-promise": "^4.0.2"
   },
   "devDependencies": {
     "geodesy": "^1.1.0",
     "moment": "^2.14.1",
-    "pcrypt": "git+https://github.com/laverdet/pcrypt.git",
-    "simple-s2-node": "git+https://github.com/billyriantono/simple-s2-node.git"
+    "pcrypt": "git+https://github.com/laverdet/pcrypt.git"
   }
 }
