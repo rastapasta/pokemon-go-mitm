@@ -119,13 +119,20 @@ class PokemonGoMITM
     .then (response) =>
       @log "[+] Forwarding result from real endpoint"
 
-      zlib.gunzip response.body, (err, decoded) =>
-        buffer = @handleResponse decoded, requestedActions
+      send = (buffer) ->
+        response.headers["content-length"] = buffer.length if buffer
 
-        zlib.gzip buffer, (err, encoded) =>
-          response.headers["content-length"] = buffer.length if buffer
-          res.writeHead response.statusCode, response.headers
-          res.end encoded, "binary"
+        res.writeHead response.statusCode, response.headers
+        res.end buffer, "binary"
+
+      if req.headers["content-encoding"] isnt "gzip"
+        send @handleResponse response.body, requestedActions
+
+      else
+        zlib.gunzip response.body, (err, decoded) =>
+          buffer = @handleResponse decoded, requestedActions
+          zlib.gzip buffer, (err, encoded) =>  
+            send encoded
 
     .catch (e) =>
       console.log "[-] #{e}"
