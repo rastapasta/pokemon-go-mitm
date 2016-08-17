@@ -85,13 +85,15 @@ class PokemonGoMITM
       .onError @handleProxyError
       .listen port: @ports.proxy, =>
         console.log "[+] Proxy listening on #{@ports.proxy}"
-        console.log "[!] -> PROXY USAGE: make sure to have .http-mitm-proxy/certs/ca.pem installed on your device"
+        console.log "[!] -> PROXY USAGE: install http://<proxy>:#{@ports.endpoint}/ca.pem as a trusted certificate on your device"
 
     @proxy.silent = true
 
   setupEndpoint: ->
     requestedActions = []
     @server = http.createServer (req, res) =>
+      return @handleEndpointGet req, res if req.method is "GET"
+
       getRawBody req
       .then (buffer) =>
         @handleEndpointConnect req, res, buffer
@@ -99,6 +101,23 @@ class PokemonGoMITM
     @server.listen @ports.endpoint, =>
       console.log "[+] Virtual endpoint listening on #{@ports.endpoint}"
       console.log "[!] -> ENDPOINT USAGE: configure 'custom endpoint' in pokemon-go-xposed"
+
+  handleEndpointGet: (req, res) ->
+    @log "[+++] GET request for #{req.url}"
+    if req.url is '/ca.pem'
+      path = @proxy.sslCaDir + '/certs' + req.url
+      fs.stat path, (err, stats) ->
+        if err
+          res.writeHead 404, {"Content-Type": "text/plain"}
+          return res.end "Not Found\n"
+
+        res.writeHead 200, {"Content-Type": "application/x-pem-file", "Content-Length": stats.size}
+        fs.createReadStream path
+        .pipe res
+    else
+      res.writeHead 404, {"Content-Type": "text/plain"}
+      res.end "Not Found\n"
+
 
   handleEndpointConnect: (req, res, buffer) ->
     @log "[+] Handling request to virtual endpoint"
@@ -110,7 +129,7 @@ class PokemonGoMITM
 
     rp
       url: "https://#{@endpoint.api}#{req.url}"
-      method: "POST"
+      method: req.method
       body: buffer
       encoding: null
       headers: req.headers
