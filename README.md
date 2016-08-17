@@ -13,6 +13,9 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 
 
 ## How to use it?
+
+### Setting up the server
+
 * Get [nodejs](https://nodejs.org/en)
 * Get protobuf >= 3
   * Linux: libprotobuf must be present (`apt-get install libprotobuf-dev`)
@@ -28,42 +31,47 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 * Setup the [CoffeeScript](http://coffeescript.org/) interpreter (optional if using `npm` scripts)
   `npm install -g coffee-script`
 
-* Prepare your phone to accept the MITM certificate
+### Setting up your device
 
-    * Android
-      * on a **rooted** phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
-      * **otherwise**: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm/issues/69#issuecomment-238457389)
+#### Prepare your phone to accept the MITM certificate
+* Android
+  * on a **rooted** phone: install the Xposed module [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed)
+  * **otherwise**: install a [pre-patched version](https://github.com/rastapasta/pokemon-go-mitm/issues/69#issuecomment-238457389)
 
-    * iPhone
-      * you have to be **jailbroken** to use [ilendemli](https://github.com/ilendemli)'s nice certificate pinning [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
-      
+* iPhone
+  * you have to be **jailbroken** to use [ilendemli](https://github.com/ilendemli)'s nice certificate pinning [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
+
+#### For virtual endpoint mode
+
+If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed), set the custom endpoint to your machines IP (default port it **8082**). All done! 
+
+#### For MITM proxy mode
+
 * Generate a CA MITM certificate
 
-  * Run and quit `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
-  * On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
-
-    ```
-    openssl genrsa -out .http-mitm-proxy/keys/ca.private.key 2048
-    openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
-    openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
-    ```
-
-* Install the generated certificate on your mobile
-
-  * All systems (besides Android N)
-    * Copy the generated `.http-mitm-proxy/certs/ca.pem` to your mobile
-
-  * Android N
-    * Convert the CA certificate
-    ```
-    openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
-    ```
-    * Copy the generated `ca.crt` to your mobile
-
+  * Run `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
+  * Download the generated certificate from the started server via `http://host:port/ca.pem`
   * Add the certificate to the "trusted certificates" of your mobile
 
-* Setup your mobile's connection to use your machine as a proxy (default port is 8081)
-* Enjoy :)
+* Setup your mobile's connection to use your machine as a proxy (default port is **8081**)
+* Done!
+
+## Troubleshooting
+
+* Android N requires a different certificate format, generate it as following and copy the resulting `ca.crt` to your mobile
+  ```
+  openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
+  ```
+
+* On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
+
+  ```
+  openssl genrsa -out .http-mitm-proxy/keys/ca.private.key 2048
+  openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
+  openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
+  ```
+
+* To let an iPhone trust the certificate, you might have to mail it to yourself instead of downloading it on-device
 
 ## How to code it?
 
