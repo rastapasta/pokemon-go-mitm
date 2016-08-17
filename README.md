@@ -60,7 +60,7 @@ If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xp
 
 * Android N requires a different certificate format, generate it as following and copy the resulting `ca.crt` to your mobile
   ```
-  openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out ca.crt
+  openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out .http-mitm-proxy/certs/ca.crt
   ```
 
 * On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
