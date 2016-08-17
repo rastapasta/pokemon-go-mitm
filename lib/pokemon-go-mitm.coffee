@@ -92,32 +92,30 @@ class PokemonGoMITM
   setupEndpoint: ->
     requestedActions = []
     @server = http.createServer (req, res) =>
-      return @handleEndpointGet req, res if req.method is "GET"
-
-      getRawBody req
-      .then (buffer) =>
-        @handleEndpointConnect req, res, buffer
+      @handleEndpointRequest req, res, ->
+        getRawBody req
+        .then (buffer) =>
+          @handleEndpointConnect req, res, buffer
 
     @server.listen @ports.endpoint, =>
       console.log "[+] Virtual endpoint listening on #{@ports.endpoint}"
       console.log "[!] -> ENDPOINT USAGE: configure 'custom endpoint' in pokemon-go-xposed"
 
-  handleEndpointGet: (req, res) ->
-    @log "[+++] GET request for #{req.url}"
-    if req.url is '/ca.pem'
-      path = @proxy.sslCaDir + '/certs' + req.url
-      fs.stat path, (err, stats) ->
-        if err
-          res.writeHead 404, {"Content-Type": "text/plain"}
-          return res.end "Not Found\n"
+  handleEndpointRequest: (req, res, callback) ->
+    @log "[+++] #{req.method} request for #{req.url}"
+    switch req.url
+      when '/ca.pem', '/ca.crt'
+      else return callback()
 
-        res.writeHead 200, {"Content-Type": "application/x-pem-file", "Content-Length": stats.size}
-        fs.createReadStream path
-        .pipe res
-    else
-      res.writeHead 404, {"Content-Type": "text/plain"}
-      res.end "Not Found\n"
+    path = @proxy.sslCaDir + '/certs' + req.url
+    fs.stat path, (err, st) ->
+      if err
+        res.writeHead 404, {"Content-Type": "text/plain"}
+        return res.end "Not Found\n"
 
+      res.writeHead 200, {"Content-Type": "application/x-pem-file", "Content-Length": st.size}
+      fs.createReadStream path
+      .pipe res
 
   handleEndpointConnect: (req, res, buffer) ->
     @log "[+] Handling request to virtual endpoint"
