@@ -41,19 +41,19 @@ Take a look at the **examples** to get started. Feel happily invited to contribu
 * iPhone
   * you have to be **jailbroken** to use [ilendemli](https://github.com/ilendemli)'s nice certificate pinning [patch](https://github.com/ilendemli/trustme/blob/master/packages/info.ilendemli.trustme_0.0.1-1_iphoneos-arm.deb)
 
-#### For virtual endpoint mode
+#### Using Xposed on Android
 
 If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xposed), set the custom endpoint to your machines IP (default port it **8082**). All done! 
 
-#### For MITM proxy mode
+#### Using iOS or Android without Xposed
 
 * Generate a CA MITM certificate
 
   * Run `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
-  * Download the generated certificate from the started server via `http://host:port/ca.pem`
+  * Download the generated certificate from the started server via `http://host:8082/ca.pem` (or copy the file `.http-mitm-proxy/certs/ca.pem`)
   * Add the certificate to the "trusted certificates" of your mobile
 
-* Setup your mobile's connection to use your machine as a proxy (default port is **8081**)
+* Setup your mobile's connection to use your machine as a proxy (default proxy port is **8081**)
 * Done!
 
 ## Troubleshooting
