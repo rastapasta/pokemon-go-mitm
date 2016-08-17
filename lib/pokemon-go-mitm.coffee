@@ -207,11 +207,7 @@ class PokemonGoMITM
       callback false
 
   handleRequest: (buffer) ->
-    try
-      data = POGOProtos.parseWithUnknown buffer, @requestEnvelope
-    catch e
-      @log "[-] Parsing protobuf of RequestEnvelope failed.."
-      return [buffer]
+    return [buffer] unless data = @parseProtobuf buffer, @requestEnvelope
 
     requested = []
     @lastRequest = data
@@ -232,13 +228,9 @@ class PokemonGoMITM
         @log "[-] Request handler for #{protoId} isn't implemented yet.."
         continue
 
-      try
-        decoded = if request.request_message
-          POGOProtos.parseWithUnknown request.request_message, proto
-        else {}
-      catch e
-        @log "[-] Parsing protobuf of #{protoId} failed.."
-        continue
+      decoded = {}
+      if request.request_message
+        continue unless decoded = @parseProtobuf request.request_message, proto
       
       originalRequest = _.cloneDeep decoded
       afterHandlers = @handleRequestAction protoId, decoded
@@ -271,22 +263,18 @@ class PokemonGoMITM
     [buffer, requested]
 
   handleResponse: (buffer, requested) ->
-    try
-      data = POGOProtos.parseWithUnknown buffer, @responseEnvelope
-    catch e
-      @log "[-] Parsing protobuf of ResponseEnvelope failed: #{e}"
-      return buffer
+    return buffer unless data = @parseProtobuf buffer, @responseEnvelope
 
     originalData = _.cloneDeep data
 
     for handler in @responseEnvelopeHandlers
       data = handler(data, {}) or data
 
-    for id,response of data.returns
+    for id, response of data.returns
       proto = requested[id]
       if proto in POGOProtos.info()
-        decoded = POGOProtos.parseWithUnknown response, proto
-        
+        continue unless decoded = @parseProtobuf response, proto
+
         protoId = proto.split(/\./).pop().split(/Response/)[0]
 
         originalResponse = _.cloneDeep decoded
@@ -426,6 +414,12 @@ class PokemonGoMITM
   addResponseEnvelopeHandler: (cb, name=undefined) ->
     @responseEnvelopeHandlers.push cb
     this
+
+  parseProtobuf: (buffer, schema) ->
+    try
+      return POGOProtos.parseWithUnknown buffer, schema
+    catch e
+      @log "[-] Parsing protobuf of #{schema} failed: #{e}"
 
   log: (text) ->
     console.log text if @debug
