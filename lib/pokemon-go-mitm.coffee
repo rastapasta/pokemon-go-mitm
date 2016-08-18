@@ -142,7 +142,7 @@ class PokemonGoMITM
         res.writeHead response.statusCode, response.headers
         res.end buffer, "binary"
 
-      if req.headers["content-encoding"] isnt "gzip"
+      unless response.headers["content-encoding"] is "gzip"
         send @handleResponse response.body, requestedActions
 
       else
