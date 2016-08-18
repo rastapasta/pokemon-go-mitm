@@ -92,7 +92,7 @@ class PokemonGoMITM
   setupEndpoint: ->
     requestedActions = []
     @server = http.createServer (req, res) =>
-      @handleEndpointRequest req, res, ->
+      @handleEndpointRequest req, res, =>
         getRawBody req
         .then (buffer) =>
           @handleEndpointConnect req, res, buffer
