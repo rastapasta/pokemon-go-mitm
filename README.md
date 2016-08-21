@@ -68,6 +68,7 @@ If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xp
   openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
   openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
   ```
+* If you are unable to log in after installing the certificate on Android, you may have to reboot for apps to see the new CA (#208)
 
 ## How to code it?
 
