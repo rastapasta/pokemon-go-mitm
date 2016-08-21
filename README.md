@@ -50,18 +50,16 @@ If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xp
 * Generate a CA MITM certificate
 
   * Run `npm start` (or `coffee example.logTraffic.coffee`) to generate a CA certificate
-  * Download the generated certificate from the started server via `http://host:8082/ca.pem` (or copy the file `.http-mitm-proxy/certs/ca.pem`)
-  * Add the certificate to the "trusted certificates" of your mobile
+  * Download the generated certificate from the started server via `http://host:8082/ca.crt` (or copy the file `.http-mitm-proxy/certs/ca.pem`)
+  * Add the certificate to the "trusted certificates" of your mobile (for "VPN and apps" on Android)
 
 * Setup your mobile's connection to use your machine as a proxy (default proxy port is **8081**)
 * Done!
 
 ## Troubleshooting
 
-* Android N requires a different certificate format, generate it as following and copy the resulting `ca.crt` to your mobile
-  ```
-  openssl x509 -outform der -in .http-mitm-proxy/certs/ca.pem -out .http-mitm-proxy/certs/ca.crt
-  ```
+* Android N requires a different certificate format, make sure you download `http://host:8082/ca.crt` to your mobile
+* To let an iPhone or iPad trust the certificate, you might have to save and email `http://host:8082/ca.crt` to yourself to open it in the Mail app
 
 * On very few systems (Raspberry Pi) the CA certificate has to be generated manually:
 
@@ -70,8 +68,6 @@ If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xp
   openssl rsa -in .http-mitm-proxy/keys/ca.private.key -pubout > .http-mitm-proxy/keys/ca.public.key
   openssl req -x509 -new -nodes -key .http-mitm-proxy/keys/ca.private.key -days 1024 -out .http-mitm-proxy/certs/ca.pem -subj "/C=US/ST=Utah/L=Provo/O=PokemonCA/CN=example.com"
   ```
-
-* To let an iPhone trust the certificate, you might have to mail it to yourself instead of downloading it on-device
 
 ## How to code it?
 
