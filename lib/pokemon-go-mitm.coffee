@@ -15,6 +15,7 @@ rp = require 'request-promise'
 Promise = require 'bluebird'
 DNS = require 'dns'
 zlib = require 'zlib'
+forge = require 'node-forge'
 getRawBody = require 'raw-body'
 
 class PokemonGoMITM
@@ -85,37 +86,28 @@ class PokemonGoMITM
       .onError @handleProxyError
       .listen port: @ports.proxy, =>
         console.log "[+] Proxy listening on #{@ports.proxy}"
-        console.log "[!] -> PROXY USAGE: install http://<proxy>:#{@ports.endpoint}/ca.pem as a trusted certificate on your device"
+        console.log "[!] -> PROXY USAGE: install http://<host>:#{@ports.endpoint}/ca.crt as a trusted certificate"
 
     @proxy.silent = true
 
   setupEndpoint: ->
     requestedActions = []
     @server = http.createServer (req, res) =>
-      @handleEndpointRequest req, res, =>
-        getRawBody req
-        .then (buffer) =>
-          @handleEndpointConnect req, res, buffer
+      @handleEndpointRequest req, res
 
     @server.listen @ports.endpoint, =>
       console.log "[+] Virtual endpoint listening on #{@ports.endpoint}"
       console.log "[!] -> ENDPOINT USAGE: configure 'custom endpoint' in pokemon-go-xposed"
 
-  handleEndpointRequest: (req, res, callback) ->
+  handleEndpointRequest: (req, res) ->
     @log "[+++] #{req.method} request for #{req.url}"
     switch req.url
-      when '/ca.pem', '/ca.crt'
-      else return callback()
+      when '/ca.pem', '/ca.crt', '/ca.der'
+        return @endpointCertHandler req, res
 
-    path = @proxy.sslCaDir + '/certs' + req.url
-    fs.stat path, (err, st) ->
-      if err
-        res.writeHead 404, {"Content-Type": "text/plain"}
-        return res.end "Not Found\n"
-
-      res.writeHead 200, {"Content-Type": "application/x-pem-file", "Content-Length": st.size}
-      fs.createReadStream path
-      .pipe res
+    getRawBody req
+    .then (buffer) =>
+      @handleEndpointConnect req, res, buffer
 
   handleEndpointConnect: (req, res, buffer) ->
     @log "[+] Handling request to virtual endpoint"
@@ -153,6 +145,26 @@ class PokemonGoMITM
 
     .catch (e) =>
       console.log "[-] #{e}"
+
+  endpointCertHandler: (req, res) ->
+    path = @proxy.sslCaDir + '/certs' + req.url
+    if toDer = /\.(crt|der)$/.test path
+      path = path.replace /\.(crt|der)$/, '.pem'
+
+    fs.readFile path, (err, data) ->
+      code = 200
+      type = "application/x-pem-file"
+
+      if err
+        code = 404
+        type = "text/html"
+        data = "<html>\n<title>404</title>\n<body>Not found</body>\n</html>"
+      else if toDer
+        type = "application/x-x509-ca-cert"
+        data = forge.pem.decode(data)[0].body;
+
+      res.writeHead code, {"Content-Type": type, "Content-Length": data.length}
+      res.end data, 'binary'
 
   handleProxyConnect: (req, socket, head, callback) =>
     return callback() unless req.url.match /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:443/
