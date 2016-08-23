@@ -41,9 +41,33 @@ class PokemonGoMITM
   requestEnvelopeHandlers: []
   responseEnvelopeHandlers: []
 
-  requestInjectQueue: []
-  lastRequest: null
-  lastCtx: null
+  class Session
+    id: null
+    url: null
+    expiration: 0
+    lastRequest: null
+    requestInjectQueue: []
+    data: {}
+
+    constructor: (id, url) ->
+      @id = id
+      @url = url
+
+    setRequest: (req, url) ->
+      @lastRequest = req
+      @url = url
+      if req.auth_ticket
+        @expiration = parseInt req.auth_ticket.expire_timestamp_ms
+        Buffer.concat([req.auth_ticket.start, req.auth_ticket.end]).toString()
+      else if req.auth_info
+        req.auth_info.token.contents
+
+    setResponse: (res) ->
+      if res.auth_ticket
+        @expiration = parseInt res.auth_ticket.expire_timestamp_ms
+        Buffer.concat([res.auth_ticket.start, res.auth_ticket.end]).toString()
+
+  sessions: {}
 
   proxy: null
   server: null
@@ -91,7 +115,6 @@ class PokemonGoMITM
     @proxy.silent = true
 
   setupEndpoint: ->
-    requestedActions = []
     @server = http.createServer (req, res) =>
       @handleEndpointRequest req, res
 
@@ -111,7 +134,7 @@ class PokemonGoMITM
 
   handleEndpointConnect: (req, res, buffer) ->
     @log "[+] Handling request to virtual endpoint"
-    [buffer, requestedActions] = @handleRequest buffer
+    [buffer, session] = @handleRequest buffer, req.url
 
     delete req.headers.host
     delete req.headers["content-length"]
@@ -135,12 +158,12 @@ class PokemonGoMITM
         res.end buffer, "binary"
 
       unless response.headers["content-encoding"] is "gzip"
-        send @handleResponse response.body, requestedActions
+        send @handleResponse response.body, session
 
       else
         zlib.gunzip response.body, (err, decoded) =>
-          buffer = @handleResponse decoded, requestedActions
-          zlib.gzip buffer, (err, encoded) =>  
+          buffer = @handleResponse decoded, session
+          zlib.gzip buffer, (err, encoded) =>
             send encoded
 
     .catch (e) =>
@@ -182,22 +205,22 @@ class PokemonGoMITM
 
       # Intercept calls to the oAuth endpoint to patch the signature
       when @endpoint.oauth then @proxySignatureHandler ctx
-    
+
     callback()
 
   proxyRequestHandler: (ctx) ->
     @log "[+++] Request to #{ctx.clientToProxyRequest.url}"
 
     ### Client Reuqest Handling ###
-    requestedActions = []
     requestChunks = []
+    session = null
 
     ctx.onRequestData (ctx, chunk, callback) =>
       requestChunks.push chunk
       callback null, null
 
     ctx.onRequestEnd (ctx, callback) =>
-      [buffer, requestedActions] = @handleRequest Buffer.concat requestChunks
+      [buffer, session] = @handleRequest Buffer.concat(requestChunks), ctx.clientToProxyRequest.url
 
       ctx.proxyToServerRequest.write buffer
 
@@ -211,43 +234,41 @@ class PokemonGoMITM
       callback()
 
     ctx.onResponseEnd (ctx, callback) =>
-      buffer = @handleResponse Buffer.concat(responseChunks), requestedActions
+      buffer = @handleResponse Buffer.concat(responseChunks), session
 
       ctx.proxyToClientResponse.end buffer
       callback false
 
-  handleRequest: (buffer) ->
+  handleRequest: (buffer, url) ->
     return [buffer] unless data = @parseProtobuf buffer, @requestEnvelope
-
-    requested = []
-    @lastRequest = data
 
     originalData = _.cloneDeep data
 
-    for handler in @requestEnvelopeHandlers
-      data = handler(data) or data
+    session = @getSession(data, url)
 
-    for id,request of data.requests
-      protoId = changeCase.pascalCase request.request_type
-    
-      # Queue the ProtoId for the response handling
-      requested.push "POGOProtos.Networking.Responses.#{protoId}Response"
-      
-      proto = "POGOProtos.Networking.Requests.Messages.#{protoId}Message"
+    for handler in @requestEnvelopeHandlers
+      data = if handler.length > 1
+        handler(session.data, data) or data
+      else
+        handler(data) or data
+
+    for request in data.requests
+      rpcName = changeCase.pascalCase request.request_type
+      proto = "POGOProtos.Networking.Requests.Messages.#{rpcName}Message"
       unless proto in POGOProtos.info()
-        @log "[-] Request handler for #{protoId} isn't implemented yet.."
+        @log "[-] Request handler for #{rpcName} isn't implemented yet!"
         continue
 
       decoded = {}
       if request.request_message
         continue unless decoded = @parseProtobuf request.request_message, proto
-      
+
       originalRequest = _.cloneDeep decoded
-      afterHandlers = @handleRequestAction protoId, decoded
+      afterHandlers = @handleRequestAction session, rpcName, decoded
 
       # disabled since signature validation
       # unless _.isEqual originalRequest, afterHandlers
-      #   @log "[!] Overwriting "+protoId
+      #   @log "[!] Overwriting #{rpcName} request
       #   request.request_message = POGOProtos.serialize afterHandlers, proto
 
     # disabled since signature validation
@@ -270,37 +291,48 @@ class PokemonGoMITM
     #   @log "[+] Recoding RequestEnvelope"
     #   buffer = POGOProtos.serialize data, @requestEnvelope
 
-    [buffer, requested]
+    session.setRequest data, url
 
-  handleResponse: (buffer, requested) ->
-    return buffer unless data = @parseProtobuf buffer, @responseEnvelope
+    [buffer, session]
+
+
+  handleResponse: (buffer, session) ->
+    return buffer unless session and data = @parseProtobuf buffer, @responseEnvelope
 
     originalData = _.cloneDeep data
 
     for handler in @responseEnvelopeHandlers
-      data = handler(data, {}) or data
+      data = if handler.length > 1
+        handler(session.data, data) or data
+      else handler(data) or data
 
-    for id, response of data.returns
-      proto = requested[id]
+    for id, response of data.returns when response.length > 0
+      unless id < session.lastRequest.requests.length
+        @log "[-] Extra response #{id} with no matching request!"
+        continue
+      rpcName = changeCase.pascalCase session.lastRequest.requests[id].request_type
+      proto = "POGOProtos.Networking.Responses.#{rpcName}Response"
       if proto in POGOProtos.info()
         continue unless decoded = @parseProtobuf response, proto
 
-        protoId = proto.split(/\./).pop().split(/Response/)[0]
-
         originalResponse = _.cloneDeep decoded
-        afterHandlers = @handleResponseAction protoId, decoded
+        afterHandlers = @handleResponseAction session, rpcName, decoded
         unless _.isEqual afterHandlers, originalResponse
-          @log "[!] Overwriting "+protoId
+          @log "[!] Overwriting #{rpcName} response"
           data.returns[id] = POGOProtos.serialize afterHandlers, proto
 
         # disabled since signature validation
         # if injected and data.returns.length-injected-1 >= id
         #   # Remove a previously injected request to not confuse the client
-        #   @log "[!] Removing #{protoId} from response as it was previously injected"
+        #   @log "[!] Removing #{rpcName} from response as it was previously injected"
         #   delete data.returns[id]
 
       else
-        @log "[-] Response handler for #{requested[id]} isn't implemented yet.."
+        @log "[-] Response handler for #{rpcName} isn't implemented yet!"
+
+    # Update session expiration and auth_ticket from response
+    if id = session.setResponse(data)
+      @refreshSession(session, id)
 
     # Overwrite the response in case a hook hit the fan
     unless _.isEqual originalData, data
@@ -328,23 +360,62 @@ class PokemonGoMITM
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
     @log '[-] ' + errorKind + ' on ' + url + ':', err
 
-  handleRequestAction: (action, data) ->
+
+  getSession: (req, url) ->
+    # use auth_ticket (if logged in) or token as id for this session
+    id = if req.auth_ticket
+      Buffer.concat [req.auth_ticket.start, req.auth_ticket.end]
+      .toString()
+    else if req.auth_info
+      req.auth_info.token.contents
+
+    unless id and session = @sessions[id]
+      timestamp = Date.now()
+      # check if this is a retried request with different auth token
+      reqId = parseInt req.request_id
+      for i, s of @sessions
+        if s.lastRequest.request_id is reqId
+          session = s
+        # do some housekeeping on old sessions
+        if s.expiration < timestamp
+          delete @sessions[i]
+      # create a new session if not found (id can be undefined)
+      session = new Session id, url unless session
+
+    # set last request
+    if id = session.setRequest req, url
+      @sessions[id] = session
+
+    session
+
+  refreshSession: (session, newId) ->
+    delete @sessions[session.id] if session.id
+    @sessions[newId] = session
+    session.id = newId
+
+  handleRequestAction: (session, action, data) ->
     @log "[+] Request for action #{action}: "
     @log data if data
 
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     for handler in handlers
-      data = handler(data, action) or data
+      data = if handler.length > 2
+        handler(session.data, data, action) or data
+      else
+        handler(data, action) or data
 
     data
 
-  handleResponseAction: (action, data) ->
+  handleResponseAction: (session, action, data) ->
     @log "[+] Response for action #{action}"
     @log data if data
 
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     for handler in handlers
-      data = handler(data, action) or data
+      data = if handler.length > 2
+        handler(session.data, data, action) or data
+      else
+        handler(data, action) or data
 
     data
 
