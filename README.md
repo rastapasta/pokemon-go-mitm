@@ -1,5 +1,5 @@
 # pokemon-go-mitm-node
-![pokemon](https://img.shields.io/badge/Pokemon%20GO-0.33.0-blue.svg?style=flat-square")
+![pokemon](https://img.shields.io/badge/Pokemon%20GO-0.35.0-blue.svg?style=flat-square")
 [![npm version](https://badge.fury.io/js/pokemon-go-mitm.svg)](https://badge.fury.io/js/pokemon-go-mitm)
 ![dependencies](https://david-dm.org/rastapasta/pokemon-go-mitm-node.svg)
 ![license](https://img.shields.io/github/license/rastapasta/pokemon-go-mitm-node.svg)
