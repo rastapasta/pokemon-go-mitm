@@ -2,6 +2,7 @@
   Pokemon Go(c) MITM node proxy
   by Michael Strassburger <codepoet@cpan.org>
 
+  This example just dumps all in-/outgoing messages and responses plus all envelopes and signatures
 
 ###
 
