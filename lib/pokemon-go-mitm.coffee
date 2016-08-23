@@ -330,7 +330,7 @@ class PokemonGoMITM
 
   handleRequestAction: (action, data) ->
     @log "[+] Request for action #{action}: "
-    @log data if data
+    @logData data if data
 
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     for handler in handlers
@@ -340,7 +340,7 @@ class PokemonGoMITM
 
   handleResponseAction: (action, data) ->
     @log "[+] Response for action #{action}"
-    @log data if data
+    @logData data if data
 
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     for handler in handlers
@@ -390,7 +390,7 @@ class PokemonGoMITM
   #         decoded = POGOProtos.parseWithUnknown buffer, @responseEnvelope
   #         data = POGOProtos.parseWithUnknown decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
           
-  #         @log data
+  #         @logData data
   #         data
   #       catch e
   #         @log "[-] Parsing of response to crafted #{action} failed: #{e}"
@@ -433,5 +433,8 @@ class PokemonGoMITM
 
   log: (text) ->
     console.log text if @debug
+
+  logData: (text) ->
+    console.log JSON.stringify(text, null, 4) if @debug
 
 module.exports = PokemonGoMITM
