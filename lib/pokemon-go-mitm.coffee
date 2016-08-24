@@ -41,6 +41,11 @@ class PokemonGoMITM
   requestEnvelopeHandlers: []
   responseEnvelopeHandlers: []
 
+  rawRequestHandlers: {}
+  rawResponseHandlers: {}
+  rawRequestEnvelopeHandlers: []
+  rawResponseEnvelopeHandlers: []
+
   class Session
     id: null
     url: null
@@ -240,6 +245,9 @@ class PokemonGoMITM
       callback false
 
   handleRequest: (buffer, url) ->
+    for handler in @rawRequestEnvelopeHandlers
+        buffer = handler(buffer) or buffer
+
     return [buffer] unless data = @parseProtobuf buffer, @requestEnvelope
 
     originalData = _.cloneDeep data
@@ -255,6 +263,12 @@ class PokemonGoMITM
     for request in data.requests
       rpcName = changeCase.pascalCase request.request_type
       proto = "POGOProtos.Networking.Requests.Messages.#{rpcName}Message"
+
+      # Raw handlers run first
+      handlers = [].concat @rawRequestHandlers[rpcName] or [], @rawRequestHandlers['*'] or []
+      for handler in handlers
+        request = handler(request, rpcName) or request
+
       unless proto in POGOProtos.info()
         @log "[-] Request handler for #{rpcName} isn't implemented yet!"
         continue
@@ -297,6 +311,9 @@ class PokemonGoMITM
 
 
   handleResponse: (buffer, session) ->
+    for handler in @rawResponseEnvelopeHandlers
+        buffer = handler(buffer) or buffer
+
     return buffer unless session and data = @parseProtobuf buffer, @responseEnvelope
 
     originalData = _.cloneDeep data
@@ -312,6 +329,12 @@ class PokemonGoMITM
         continue
       rpcName = changeCase.pascalCase session.lastRequest.requests[id].request_type
       proto = "POGOProtos.Networking.Responses.#{rpcName}Response"
+
+      # Raw handlers run first
+      handlers = [].concat @rawResponseHandlers[rpcName] or [], @rawResponseHandlers['*'] or []
+      for handler in handlers
+        response = handler(response, rpcName) or response
+
       if proto in POGOProtos.info()
         continue unless decoded = @parseProtobuf response, proto
 
@@ -470,30 +493,48 @@ class PokemonGoMITM
   #       @log "[-] Crafting a request failed with #{e}"
   #       throw e
 
-  setResponseHandler: (action, cb) ->
-    @addResponseHandler action, cb
-    this
-
-  addResponseHandler: (action, cb) ->
-    @responseHandlers[action] ?= []
-    @responseHandlers[action].push(cb)
-    this
-
   setRequestHandler: (action, cb) ->
     @addRequestHandler action, cb
     this
 
+  setResponseHandler: (action, cb) ->
+    @addResponseHandler action, cb
+    this
+
   addRequestHandler: (action, cb) ->
     @requestHandlers[action] ?= []
-    @requestHandlers[action].push(cb)
+    @requestHandlers[action].push cb.bind this
+    this
+
+  addResponseHandler: (action, cb) ->
+    @responseHandlers[action] ?= []
+    @responseHandlers[action].push cb.bind this
     this
 
   addRequestEnvelopeHandler: (cb, name=undefined) ->
-    @requestEnvelopeHandlers.push cb
+    @requestEnvelopeHandlers.push cb.bind this
     this
 
   addResponseEnvelopeHandler: (cb, name=undefined) ->
-    @responseEnvelopeHandlers.push cb
+    @responseEnvelopeHandlers.push cb.bind this
+    this
+
+  addRawRequestHandler: (action, cb) ->
+    @rawRequestHandlers[action] ?= []
+    @rawRequestHandlers[action].push cb.bind this
+    this
+
+  addRawResponseHandler: (action, cb) ->
+    @rawResponseHandlers[action] ?= []
+    @rawResponseHandlers[action].push cb.bind this
+    this
+
+  addRawRequestEnvelopeHandler: (cb, name=undefined) ->
+    @rawRequestEnvelopeHandlers.push cb.bind this
+    this
+
+  addRawResponseEnvelopeHandler: (cb, name=undefined) ->
+    @rawResponseEnvelopeHandlers.push cb.bind this
     this
 
   parseProtobuf: (buffer, schema) ->

@@ -7,7 +7,6 @@
 ###
 
 PokemonGoMITM = require './lib/pokemon-go-mitm'
-POGOProtos = require 'pokemongo-protobuf'
 pcrypt = require 'pcrypt'
 
 # Uncomment if you want to filter the regular messages
@@ -16,15 +15,16 @@ ignore = []
 
 server = new PokemonGoMITM port: 8081, debug: true
 	.addRequestEnvelopeHandler (data) ->
-		console.log "[#] Envelope Request", JSON.stringify(data, null, 4)
+		console.log "[#] Request Envelope", JSON.stringify(data, null, 4)
 		false
 
 	.addResponseEnvelopeHandler (data) ->
-		console.log "[#] Envelope Response", JSON.stringify(data, null, 4)
+		console.log "[#] Response Envelope", JSON.stringify(data, null, 4)
 		false
 
 	.addRequestEnvelopeHandler (data) ->
 		buffer = pcrypt.decrypt data.unknown6?.unknown2?.encrypted_signature
-		decoded = POGOProtos.parseWithUnknown buffer, 'POGOProtos.Networking.Envelopes.Signature'
-		console.log "[@] Envelope Request Signature", JSON.stringify(decoded, null, 4)
+		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.Signature'
+		console.log "[@] Request Envelope Signature", JSON.stringify(decoded, null, 4)
 		false
+

@@ -9,11 +9,10 @@
 ###
 
 PokemonGoMITM = require './lib/pokemon-go-mitm'
-POGOProtos = require 'pokemongo-protobuf'
 pcrypt = require 'pcrypt'
 
 server = new PokemonGoMITM port: 8081
 	.addRequestEnvelopeHandler (data) ->
 		buffer = pcrypt.decrypt data.unknown6?.unknown2?.encrypted_signature
-		console.log POGOProtos.parseWithUnknown buffer, 'POGOProtos.Networking.Envelopes.Signature'
+		console.log @decodeProtobuf buffer, 'POGOProtos.Networking.Envelopes.Signature'
 		false
