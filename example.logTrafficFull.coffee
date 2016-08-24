@@ -23,6 +23,9 @@ server = new PokemonGoMITM port: 8081, debug: true
 		false
 
 	.addRequestEnvelopeHandler (data) ->
+		# TODO: update once repeated field 6 is parsed
+		return false unless data.unknown6?.unknown2?.encrypted_signature
+
 		buffer = pcrypt.decrypt data.unknown6?.unknown2?.encrypted_signature
 		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.Signature'
 		console.log "[@] Request Envelope Signature", JSON.stringify(decoded, null, 4)

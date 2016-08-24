@@ -10,28 +10,28 @@ PokemonGoMITM = require './lib/pokemon-go-mitm'
 fs = require 'fs'
 pcrypt = require 'pcrypt'
 
-# Uncomment if you want to filter the regular messages
-# ignore = ['GetHatchedEggs', 'DownloadSettings', 'GetInventory', 'CheckAwardedBadges', 'GetMapObjects']
-ignore = []
-
 server = new PokemonGoMITM port: 8081, debug: true
 	.addRawRequestEnvelopeHandler (buffer) ->
 		timestamp = Date.now()
-		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+		if decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+			id = decoded.request_id
 		console.log "[#] Request Envelope", decoded
-		fs.writeFileSync "#{timestamp}.#{decoded.request_id}.request", buffer, 'binary'
+		fs.writeFileSync "#{timestamp}.#{id}.request", buffer, 'binary'
+
+		# TODO: update once repeated field 6 is parsed
+		return false unless decoded?.unknown6?.unknown2?.encrypted_signature
 
 		buffer = pcrypt.decrypt decoded.unknown6?.unknown2?.encrypted_signature
-		decoded = @parseProtobuf signature, 'POGOProtos.Networking.Envelopes.Signature'
-		console.log "[@] Request Envelope Signature", buffer
-		fs.writeFileSync "#{timestamp}.#{decoded.request_id}.signature", buffer, 'binary'
+		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.Signature'
+		console.log "[@] Request Envelope Signature", decoded
+		fs.writeFileSync "#{timestamp}.#{id}.signature", buffer, 'binary'
 		false
 
-	.addRawResponseEnvelopeHandler (data) ->
+	.addRawResponseEnvelopeHandler (buffer) ->
 		timestamp = Date.now()
-		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.RequestEnvelope'
+		if decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.ResponseEnvelope'
+			id = decoded.request_id
 		console.log "[#] Response Envelope", decoded
-		fs.writeFileSync "#{timestamp}.#{decoded.request_id}.response", buffer, 'binary'
+		fs.writeFileSync "#{timestamp}.#{id}.response", buffer, 'binary'
 		false
-
 
