@@ -73,7 +73,7 @@ If you are using [pokemon-go-xposed](https://github.com/rastapasta/pokemon-go-xp
 ## How to code it?
 
 ```coffeescript
-PokemonGoMITM = require './lib/pokemon-go-mitm'
+PokemonGoMITM = require 'pokemon-go-mitm'
 server = new PokemonGoMITM port: 8081
 
 # Replace all PokeStops with kittys!
