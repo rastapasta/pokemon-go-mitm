@@ -12,6 +12,7 @@ fs = require 'fs'
 _ = require 'lodash'
 request = require 'request'
 rp = require 'request-promise'
+util = require 'util'
 Promise = require 'bluebird'
 DNS = require 'dns'
 zlib = require 'zlib'
@@ -381,7 +382,7 @@ class PokemonGoMITM
 
   handleProxyError: (ctx, err, errorKind) =>
     url = if ctx and ctx.clientToProxyRequest then ctx.clientToProxyRequest.url else ''
-    @log '[-] ' + errorKind + ' on ' + url + ':', err
+    @log "[-] #{errorKind} on #{url}:", err
 
 
   getSession: (req, url) ->
@@ -417,8 +418,7 @@ class PokemonGoMITM
     session.id = newId
 
   handleRequestAction: (session, action, data) ->
-    @log "[+] Request for action #{action}: "
-    @logData data if data
+    @log "[+] Request for action #{action}:", data
 
     handlers = [].concat @requestHandlers[action] or [], @requestHandlers['*'] or []
     for handler in handlers
@@ -430,8 +430,7 @@ class PokemonGoMITM
     data
 
   handleResponseAction: (session, action, data) ->
-    @log "[+] Response for action #{action}"
-    @logData data if data
+    @log "[+] Response for action #{action}:", data
 
     handlers = [].concat @responseHandlers[action] or [], @responseHandlers['*'] or []
     for handler in handlers
@@ -484,7 +483,7 @@ class PokemonGoMITM
   #         decoded = POGOProtos.parseWithUnknown buffer, @responseEnvelope
   #         data = POGOProtos.parseWithUnknown decoded.returns[0], "POGOProtos.Networking.Responses.#{changeCase.pascalCase action}Response"
           
-  #         @logData data
+  #         @log data
   #         data
   #       catch e
   #         @log "[-] Parsing of response to crafted #{action} failed: #{e}"
@@ -543,10 +542,9 @@ class PokemonGoMITM
     catch e
       @log "[-] Parsing protobuf of #{schema} failed: #{e}"
 
-  log: (text) ->
-    console.log text if @debug
-
-  logData: (text) ->
-    console.log JSON.stringify(text, null, 4) if @debug
+  log: ->
+    for arg, i in arguments when typeof arg is 'object'
+      arguments[i] = util.inspect arg, { depth: null }
+    console.log.apply(null, arguments) if @debug
 
 module.exports = PokemonGoMITM
