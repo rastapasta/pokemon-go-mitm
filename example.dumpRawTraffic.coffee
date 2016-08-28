@@ -19,9 +19,9 @@ server = new PokemonGoMITM port: 8081, debug: true
 		fs.writeFileSync "#{timestamp}.#{id}.request", buffer, 'binary'
 
 		# TODO: update once repeated field 6 is parsed
-		return false unless decoded?.unknown6?.unknown2?.encrypted_signature
+		return false unless decoded?.unknown6[0]?.unknown2?.encrypted_signature
 
-		buffer = pcrypt.decrypt decoded.unknown6?.unknown2?.encrypted_signature
+		buffer = pcrypt.decrypt decoded.unknown6[0]?.unknown2?.encrypted_signature
 		decoded = @parseProtobuf buffer, 'POGOProtos.Networking.Envelopes.Signature'
 		console.log "[@] Request Envelope Signature", decoded
 		fs.writeFileSync "#{timestamp}.#{id}.signature", buffer, 'binary'
