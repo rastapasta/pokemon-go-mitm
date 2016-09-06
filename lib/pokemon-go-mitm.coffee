@@ -65,7 +65,7 @@ class PokemonGoMITM
       if req.auth_ticket
         @expiration = parseInt req.auth_ticket.expire_timestamp_ms
         Buffer.concat([req.auth_ticket.start, req.auth_ticket.end]).toString()
-      else if req.auth_info
+      else if req.auth_info and req.auth_info.token
         req.auth_info.token.contents
 
     setResponse: (res) ->
@@ -390,7 +390,7 @@ class PokemonGoMITM
     id = if req.auth_ticket
       Buffer.concat [req.auth_ticket.start, req.auth_ticket.end]
       .toString()
-    else if req.auth_info
+    else if req.auth_info and req.auth_info.token
       req.auth_info.token.contents
 
     unless id and session = @sessions[id]
@@ -545,6 +545,6 @@ class PokemonGoMITM
   log: ->
     for arg, i in arguments when typeof arg is 'object'
       arguments[i] = util.inspect arg, { depth: null }
-    console.log.apply(null, arguments) if @debug
+    console.log.apply null, arguments if @debug
 
 module.exports = PokemonGoMITM
